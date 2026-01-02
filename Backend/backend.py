@@ -90,16 +90,27 @@ Examples of unacceptable questions (you must politely refuse):
         
         try:
             print(f"[Backend] Calling Groq API with model: {self.model}")
-            print(f"[Backend] Number of messages in history: {len(self.conversation_history)}")
             
-            # Prepare messages for API (remove timestamp field)
+            # Prepare messages for API - system prompt + last 10 conversation messages
+            system_msg = [msg for msg in self.conversation_history if msg["role"] == "system"]
+            conversation_msgs = [msg for msg in self.conversation_history if msg["role"] != "system"]
+            
+            # Take only last 10 conversation messages (5 exchanges)
+            recent_conversation = conversation_msgs[-10:] if len(conversation_msgs) > 10 else conversation_msgs
+            
+            # Combine system prompt with recent conversation
+            messages_to_send = system_msg + recent_conversation
+            
+            # Remove timestamp field for API
             api_messages = [
                 {"role": msg["role"], "content": msg["content"]}
-                for msg in self.conversation_history
+                for msg in messages_to_send
             ]
-            print(f"[Backend] API messages prepared (without timestamps)")
             
-            # Call API with entire conversation history (including system prompt)
+            print(f"[Backend] Total messages in full history: {len(self.conversation_history)}")
+            print(f"[Backend] Sending to API: 1 system + {len(recent_conversation)} conversation messages = {len(api_messages)} total")
+            
+            # Call API with system prompt + recent conversation
             completion = self.client.chat.completions.create(
                 model=self.model,
                 messages=api_messages,
