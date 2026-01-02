@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FishAI - Intelligent Fish Classification</title>
+    <meta name="description" content="Upload fish images for AI-powered classification with detailed information and interactive chatbot assistance">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e40af",
+                        secondary: "#0ea5e9",
+                        accent: "#10b981",
+                        dark: "#1e293b",
+                        light: "#f8fafc"
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .drop-zone {
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-zone.drag-over {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        
+        .chat-message {
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-card {
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chatbot-toggle {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
+    <!-- Include Header -->
+    <div id="header"></div>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            });
+    </script>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h2 class="text-4xl md:text-5xl font-bold text-dark mb-4">Discover Fish Species with AI</h2>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Upload any fish image and our AI model will identify the species, provide confidence scores, and share fascinating details about the fish.</p>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Left Column: Upload & Results -->
+            <div class="space-y-8">
+                <!-- Upload Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-dark mb-6">Upload Fish Image</h3>
+                    
+                    <div id="dropZone" class="drop-zone rounded-xl p-8 text-center cursor-pointer mb-6">
+                        <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-cloud-upload-alt text-primary text-3xl"></i>
+                        </div>
+                        <p class="text-lg font-medium text-dark mb-2">Drag & drop your fish image here</p>
+                        <p class="text-gray-500 mb-4">or click to browse files</p>
+                        <input type="file" id="imageUpload" accept="image/*" class="hidden">
+                        <label for="imageUpload" class="inline-block bg-primary text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
+                            <i class="fas fa-folder-open mr-2"></i>Browse Images
+                        </label>
+                        <p class="text-sm text-gray-400 mt-4">Supports JPG, PNG, WebP up to 10MB</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <i class="fas fa-bolt text-primary text-xl mb-2"></i>
+                            <p class="font-medium">Fast Analysis</p>
+                            <p class="text-sm text-gray-600">Results in seconds</p>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <i class="fas fa-database text-accent text-xl mb-2"></i>
+                            <p class="font-medium">100+ Species</p>
+                            <p class="text-sm text-gray-600">Extensive database</p>
+                        </div>
+                    </div>
+                    
+                    <button id="analyzeBtn" class="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i class="fas fa-search mr-2"></i>Analyze Image
+                    </button>
+                </div>
+
+                <!-- Results Section -->
+                <div id="resultsSection" class="bg-white rounded-2xl shadow-lg p-6 hidden">
+                    <h3 class="text-2xl font-bold text-dark mb-6">Analysis Results</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- Image Preview -->
+                        <div class="text-center">
+                            <img id="previewImage" src="" alt="Uploaded fish image" class="max-w-full h-64 object-contain mx-auto rounded-lg">
+                        </div>
+                        
+                        <!-- Classification Result -->
+                        <div class="result-card bg-gradient-to-r from-blue-50 to-cyan-50 p-6 rounded-xl">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="text-xl font-bold text-dark" id="fishName">Clownfish</h4>
+                                    <p class="text-gray-600" id="scientificName">Amphiprioninae</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-primary" id="confidenceScore">94.7%</div>
+                                    <div class="text-sm text-gray-500">Confidence</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Confidence Bar -->
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Confidence Level</span>
+                                    <span id="confidencePercent">94.7%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div id="confidenceBar" class="bg-gradient-to-r from-green-400 to-accent h-2.5 rounded-full" style="width: 94.7%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Fish Details -->
+                            <div class="space-y-3">
+                                <h5 class="font-bold text-dark">About this Fish</h5>
+                                <p id="fishDescription" class="text-gray-700">
+                                    Clownfish are small, brightly colored fish known for their symbiotic relationship with sea anemones. They have a mucus layer that protects them from the anemone's sting. Found in warm waters of the Indian and Pacific Oceans.
+                                </p>
+                                
+                                <div class="grid grid-cols-2 gap-4 pt-4">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-ruler text-primary mr-3"></i>
+                                        <div>
+                                            <p class="text-sm text-gray-500">Average Size</p>
+                                            <p class="font-medium" id="fishSize">10-18 cm</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-water text-primary mr-3"></i>
+                                        <div>
+                                            <p class="text-sm text-gray-500">Habitat</p>
+                                            <p class="font-medium" id="fishHabitat">Coral Reefs</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-globe-americas text-primary mr-3"></i>
+                                        <div>
+                                            <p class="text-sm text-gray-500">Region</p>
+                                            <p class="font-medium" id="fishRegion">Indo-Pacific</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-utensils text-primary mr-3"></i>
+                                        <div>
+                                            <p class="text-sm text-gray-500">Diet</p>
+                                            <p class="font-medium" id="fishDiet">Omnivore</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex space-x-4">
+                            <button id="shareBtn" class="flex-1 bg-gray-100 text-dark py-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center">
+                                <i class="fas fa-share-alt mr-2"></i>Share Results
+                            </button>
+                            <button id="newAnalysisBtn" class="flex-1 bg-primary text-white py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                                <i class="fas fa-redo mr-2"></i>New Analysis
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Info & Examples -->
+            <div class="space-y-8">
+                <!-- How It Works -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-dark mb-6">How It Works</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="font-bold">1</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-dark mb-1">Upload Your Image</h4>
+                                <p class="text-gray-600">Upload a clear photo of any fish. Our AI works best with well-lit, focused images.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="font-bold">2</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-dark mb-1">AI Analysis</h4>
+                                <p class="text-gray-600">Our deep learning model analyzes visual features to identify the fish species.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="font-bold">3</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-dark mb-1">Get Detailed Results</h4>
+                                <p class="text-gray-600">Receive species identification, confidence score, and comprehensive fish information.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <a href="how-it-works.html" class="text-primary hover:text-blue-700 font-medium inline-flex items-center">
+                            Learn more <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Example Images -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-dark mb-6">Example Classifications</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <img src="https://picsum.photos/200/150?random=101" alt="Example fish 1" class="w-full h-32 object-cover rounded-lg mb-2">
+                            <p class="font-medium">Betta Fish</p>
+                            <p class="text-sm text-primary">98.2% confidence</p>
+                        </div>
+                        <div class="text-center">
+                            <img src="https://picsum.photos/200/150?random=102" alt="Example fish 2" class="w-full h-32 object-cover rounded-lg mb-2">
+                            <p class="font-medium">Goldfish</p>
+                            <p class="text-sm text-primary">96.5% confidence</p>
+                        </div>
+                        <div class="text-center">
+                            <img src="https://picsum.photos/200/150?random=103" alt="Example fish 3" class="w-full h-32 object-cover rounded-lg mb-2">
+                            <p class="font-medium">Angelfish</p>
+                            <p class="text-sm text-primary">92.8% confidence</p>
+                        </div>
+                        <div class="text-center">
+                            <img src="https://picsum.photos/200/150?random=104" alt="Example fish 4" class="w-full h-32 object-cover rounded-lg mb-2">
+                            <p class="font-medium">Guppy</p>
+                            <p class="text-sm text-primary">95.1% confidence</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <a href="fish-database.html" class="text-primary hover:text-blue-700 font-medium inline-flex items-center">
+                            View full database <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="bg-gradient-to-r from-primary to-secondary text-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-2xl font-bold mb-6">Our Database</h3>
+                    
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold mb-1">150+</div>
+                            <p class="text-blue-100">Fish Species</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold mb-1">50K+</div>
+                            <p class="text-blue-100">Images Analyzed</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold mb-1">98.5%</div>
+                            <p class="text-blue-100">Accuracy Rate</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold mb-1">2s</div>
+                            <p class="text-blue-100">Avg. Response Time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Include Footer -->
+    <div id="footer"></div>
+    <script>
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+                // Now load the chatbot components
+                loadChatbotComponents();
+            });
+    </script>
+
+    <!-- Chatbot Components will be loaded here -->
+    <div id="chatbot-components"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 text-center">
+            <div class="w-20 h-20 mx-auto mb-6">
+                <div class="relative w-full h-full">
+                    <div class="absolute inset-0 border-4 border-blue-200 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fas fa-fish text-primary text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-dark mb-2">Analyzing Image</h3>
+            <p class="text-gray-600 mb-4">Our AI is identifying the fish species...</p>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div id="loadingProgress" class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full w-0 transition-all duration-1000"></div>
+            </div>
+            <p id="loadingStatus" class="text-sm text-gray-500 mt-2">Processing image features...</p>
+        </div>
+    </div>
+
+    <script>
+        function loadChatbotComponents() {
+            // Create chatbot popup and toggle button
+            const chatbotHTML = `
+                <!-- Chatbot Popup -->
+                <div id="chatbotPopup" class="fixed bottom-24 right-6 w-96 bg-white rounded-2xl shadow-2xl z-50 hidden transform transition-all duration-300">
+                    <!-- Chatbot Header -->
+                    <div class="bg-gradient-to-r from-primary to-secondary text-white p-4 rounded-t-2xl flex justify-between items-center">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-robot text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">FishAI Assistant</h3>
+                                <p class="text-blue-100 text-sm">Online - Ask me about fish!</p>
+                            </div>
+                        </div>
+                        <button id="closeChatbot" class="text-white hover:text-blue-200">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Chat Messages -->
+                    <div id="chatMessages" class="h-96 overflow-y-auto p-4 space-y-4">
+                        <!-- Welcome Message -->
+                        <div class="chat-message bg-blue-50 rounded-2xl rounded-tl-none p-4">
+                            <div class="flex items-start space-x-2">
+                                <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-robot text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-dark mb-1">FishAI Assistant</p>
+                                    <p class="text-gray-700">Hello! I'm your fish expert assistant. You can:</p>
+                                    <ul class="list-disc pl-4 text-gray-700 mt-1 space-y-1">
+                                        <li>Upload fish images for identification</li>
+                                        <li>Ask questions about fish species</li>
+                                        <li>Get information about fish habitats and behavior</li>
+                                        <li>Learn about fish conservation</li>
+                                    </ul>
+                                    <p class="text-gray-700 mt-2">How can I help you today?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="border-t p-4">
+                        <div class="flex space-x-2">
+                            <div class="flex-1 relative">
+                                <input type="text" id="chatInput" placeholder="Type your question about fish..." class="w-full border rounded-xl py-3 px-4 pr-12 focus:outline-none focus:ring-2 focus:ring-primary">
+                                <button id="uploadImageChat" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary">
+                                    <i class="fas fa-image"></i>
+                                </button>
+                                <input type="file" id="chatImageUpload" accept="image/*" class="hidden">
+                            </div>
+                            <button id="sendMessage" class="bg-primary text-white px-6 rounded-xl hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2">You can also drag & drop images directly into the chat</p>
+                    </div>
+                </div>
+
+                <!-- Chatbot Toggle Button -->
+                <button id="chatbotToggleFixed" class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-primary to-secondary text-white rounded-full shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center chatbot-toggle">
+                    <i class="fas fa-robot text-xl"></i>
+                    <span class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white text-xs rounded-full flex items-center justify-center animate-pulse">1</span>
+                </button>
+            `;
+            
+            document.getElementById('chatbot-components').innerHTML = chatbotHTML;
+            
+            // Initialize chatbot functionality
+            initChatbot();
+        }
+
+        // Fish database with sample data
+        const fishDatabase = [
+            {
+                "id": 1,
+                "commonName": "Clownfish",
+                "scientificName": "Amphiprioninae",
+                "description": "Clownfish are small, brightly colored fish known for their symbiotic relationship with sea anemones. They have a mucus layer that protects them from the anemone's sting. Found in warm waters of the Indian and Pacific Oceans.",
+                "size": "10-18 cm",
+                "habitat": "Coral Reefs",
+                "region": "Indo-Pacific",
+                "diet": "Omnivore",
+                "conservationStatus": "Least Concern"
+            },
+            {
+                "id": 2,
+                "commonName": "Betta Fish",
+                "scientificName": "Betta splendens",
+                "description": "Also known as Siamese fighting fish, Bettas are known for their vibrant colors and elaborate fins. They are labyrinth fish, meaning they can breathe atmospheric air. Native to Southeast Asia.",
+                "size": "6-8 cm",
+                "habitat": "Rice Paddies",
+                "region": "Southeast Asia",
+                "diet": "Carnivore",
+                "conservationStatus": "Vulnerable"
+            },
+            {
+                "id": 3,
+                "commonName": "Goldfish",
+                "scientificName": "Carassius auratus",
+                "description": "One of the most common aquarium fish, goldfish were domesticated from wild carp. They have excellent color vision and memory. Originally bred in ancient China over 1000 years ago.",
+                "size": "15-30 cm",
+                "habitat": "Freshwater",
+                "region": "Worldwide",
+                "diet": "Omnivore",
+                "conservationStatus": "Domesticated"
+            },
+            {
+                "id": 4,
+                "commonName": "Angelfish",
+                "scientificName": "Pterophyllum",
+                "description": "Freshwater angelfish are known for their distinctive triangular shape and long fins. They are cichlids native to the Amazon Basin. Popular in aquariums for their graceful swimming.",
+                "size": "15-20 cm",
+                "habitat": "Amazon Rivers",
+                "region": "South America",
+                "diet": "Omnivore",
+                "conservationStatus": "Least Concern"
+            },
+            {
+                "id": 5,
+                "commonName": "Guppy",
+                "scientificName": "Poecilia reticulata",
+                "description": "Small, colorful livebearer fish popular in home aquariums. Known for their rapid reproduction and variety of colors. Native to northeast South America but introduced worldwide.",
+                "size": "4-6 cm",
+                "habitat": "Freshwater Streams",
+                "region": "South America",
+                "diet": "Omnivore",
+                "conservationStatus": "Least Concern"
+            }
+        ];
+
+        // Chatbot messages
+        const chatbotResponses = [
+            "I can help identify that fish! Try uploading an image to the main analyzer for detailed classification.",
+            "That's a great question about fish! Based on the image, I'd recommend checking the detailed analysis results.",
+            "Fish identification requires analyzing specific visual features. Our AI model examines color patterns, fin shapes, and body structure.",
+            "Many fish species have unique markings that help with identification. Clear, well-lit images give the best results.",
+            "Did you know some fish can change their gender? Clownfish, for example, are all born male and can become female!"
+        ];
+
+        // DOM Elements
+        const dropZone = document.getElementById('dropZone');
+        const imageUpload = document.getElementById('imageUpload');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const resultsSection = document.getElementById('resultsSection');
+        const previewImage = document.getElementById('previewImage');
+        const fishName = document.getElementById('fishName');
+        const scientificName = document.getElementById('scientificName');
+        const confidenceScore = document.getElementById('confidenceScore');
+        const confidencePercent = document.getElementById('confidencePercent');
+        const confidenceBar = document.getElementById('confidenceBar');
+        const fishDescription = document.getElementById('fishDescription');
+        const fishSize = document.getElementById('fishSize');
+        const fishHabitat = document.getElementById('fishHabitat');
+        const fishRegion = document.getElementById('fishRegion');
+        const fishDiet = document.getElementById('fishDiet');
+        const shareBtn = document.getElementById('shareBtn');
+        const newAnalysisBtn = document.getElementById('newAnalysisBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingProgress = document.getElementById('loadingProgress');
+        const loadingStatus = document.getElementById('loadingStatus');
+
+        // Current state
+        let currentImage = null;
+        let chatOpen = false;
+        let messageCount = 0;
+
+        // Initialize event listeners
+        function initEventListeners() {
+            // File upload handling
+            dropZone.addEventListener('click', () => imageUpload.click());
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('drag-over');
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                if (e.dataTransfer.files.length) {
+                    handleImageUpload(e.dataTransfer.files[0]);
+                }
+            });
+
+            imageUpload.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleImageUpload(e.target.files[0]);
+                }
+            });
+
+            // Analyze button
+            analyzeBtn.addEventListener('click', analyzeImage);
+
+            // New analysis button
+            newAnalysisBtn.addEventListener('click', resetAnalysis);
+
+            // Share button
+            shareBtn.addEventListener('click', shareResults);
+        }
+
+        // Initialize chatbot
+        function initChatbot() {
+            const chatbotPopup = document.getElementById('chatbotPopup');
+            const chatbotToggle = document.getElementById('chatbotToggle');
+            const chatbotToggleFixed = document.getElementById('chatbotToggleFixed');
+            const closeChatbot = document.getElementById('closeChatbot');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const sendMessage = document.getElementById('sendMessage');
+            const uploadImageChat = document.getElementById('uploadImageChat');
+            const chatImageUpload = document.getElementById('chatImageUpload');
+
+            // Chatbot controls
+            if (chatbotToggle) {
+                chatbotToggle.addEventListener('click', toggleChatbot);
+            }
+            if (chatbotToggleFixed) {
+                chatbotToggleFixed.addEventListener('click', toggleChatbot);
+            }
+            if (closeChatbot) {
+                closeChatbot.addEventListener('click', () => {
+                    chatbotPopup.classList.add('hidden');
+                    chatOpen = false;
+                });
+            }
+
+            // Chat functionality
+            if (sendMessage) {
+                sendMessage.addEventListener('click', sendChatMessage);
+            }
+            if (chatInput) {
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') sendChatMessage();
+                });
+            }
+
+            if (uploadImageChat) {
+                uploadImageChat.addEventListener('click', () => chatImageUpload.click());
+            }
+            if (chatImageUpload) {
+                chatImageUpload.addEventListener('change', (e) => {
+                    if (e.target.files.length) {
+                        handleChatImageUpload(e.target.files[0]);
+                    }
+                });
+            }
+
+            // Allow image drop in chat
+            if (chatMessages) {
+                chatMessages.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    chatMessages.classList.add('drag-over');
+                });
+
+                chatMessages.addEventListener('dragleave', () => {
+                    chatMessages.classList.remove('drag-over');
+                });
+
+                chatMessages.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    chatMessages.classList.remove('drag-over');
+                    if (e.dataTransfer.files.length) {
+                        handleChatImageUpload(e.dataTransfer.files[0]);
+                    }
+                });
+            }
+
+            function toggleChatbot() {
+                const chatbotPopup = document.getElementById('chatbotPopup');
+                chatOpen = !chatOpen;
+                if (chatOpen) {
+                    chatbotPopup.classList.remove('hidden');
+                    chatbotPopup.classList.add('animate-float');
+                    chatInput.focus();
+                } else {
+                    chatbotPopup.classList.add('hidden');
+                    chatbotPopup.classList.remove('animate-float');
+                }
+            }
+
+            function sendChatMessage() {
+                const chatInput = document.getElementById('chatInput');
+                const chatMessages = document.getElementById('chatMessages');
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                // Add user message
+                addChatMessage(message, 'user');
+                chatInput.value = '';
+
+                // Simulate AI response
+                setTimeout(() => {
+                    const randomResponse = chatbotResponses[Math.floor(Math.random() * chatbotResponses.length)];
+                    addChatMessage(randomResponse, 'ai');
+                }, 1000);
+            }
+
+            function addChatMessage(text, sender) {
+                const chatMessages = document.getElementById('chatMessages');
+                messageCount++;
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `chat-message ${sender === 'user' ? 'ml-auto bg-primary text-white rounded-2xl rounded-tr-none' : 'bg-blue-50 rounded-2xl rounded-tl-none'}`;
+                
+                messageDiv.innerHTML = `
+                    <div class="flex items-start space-x-2 ${sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}">
+                        <div class="w-8 h-8 ${sender === 'user' ? 'bg-white/20' : 'bg-primary'} rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas ${sender === 'user' ? 'fa-user' : 'fa-robot'} text-${sender === 'user' ? 'white' : 'white'} text-sm"></i>
+                        </div>
+                        <div class="${sender === 'user' ? 'text-right' : ''}">
+                            <p class="font-medium ${sender === 'user' ? 'text-blue-100' : 'text-dark'} mb-1">${sender === 'user' ? 'You' : 'FishAI Assistant'}</p>
+                            <p class="${sender === 'user' ? 'text-blue-100' : 'text-gray-700'}">${text}</p>
+                        </div>
+                    </div>
+                `;
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function handleChatImageUpload(file) {
+                if (!file.type.match('image.*')) {
+                    addChatMessage('Please upload an image file (JPG, PNG, GIF, etc.)', 'ai');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const chatMessages = document.getElementById('chatMessages');
+                    // Add user message with image
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'chat-message ml-auto bg-primary text-white rounded-2xl rounded-tr-none p-3';
+                    messageDiv.innerHTML = `
+                        <div class="flex items-start space-x-2 flex-row-reverse space-x-reverse">
+                            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-medium text-blue-100 mb-1">You</p>
+                                <img src="${e.target.result}" alt="Uploaded fish image" class="max-w-xs rounded-lg mb-2">
+                                <p class="text-blue-100">Can you identify this fish?</p>
+                            </div>
+                        </div>
+                    `;
+                    chatMessages.appendChild(messageDiv);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    // Simulate AI response
+                    setTimeout(() => {
+                        addChatMessage('Thanks for sharing the image! I can see this is a fish. For detailed classification with confidence scores, please use the main image analyzer above. It uses our advanced AI model to provide accurate species identification and detailed information.', 'ai');
+                    }, 1500);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Handle image upload
+        function handleImageUpload(file) {
+            if (!file.type.match('image.*')) {
+                alert('Please upload an image file (JPG, PNG, GIF, etc.)');
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Image size should be less than 10MB');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentImage = e.target.result;
+                previewImage.src = currentImage;
+                analyzeBtn.disabled = false;
+                analyzeBtn.classList.remove('disabled:opacity-50', 'disabled:cursor-not-allowed');
+                
+                // Show preview in results section
+                resultsSection.classList.remove('hidden');
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Analyze image (simulated)
+        function analyzeImage() {
+            if (!currentImage) return;
+
+            // Show loading overlay
+            loadingOverlay.classList.remove('hidden');
+            loadingProgress.style.width = '0%';
+            loadingStatus.textContent = 'Processing image features...';
+
+            // Simulate analysis progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress > 100) progress = 100;
+                loadingProgress.style.width = `${progress}%`;
+                
+                if (progress < 30) {
+                    loadingStatus.textContent = 'Extracting image features...';
+                } else if (progress < 60) {
+                    loadingStatus.textContent = 'Comparing with fish database...';
+                } else if (progress < 90) {
+                    loadingStatus.textContent = 'Calculating confidence scores...';
+                } else {
+                    loadingStatus.textContent = 'Finalizing results...';
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loadingOverlay.classList.add('hidden');
+                        showAnalysisResults();
+                    }, 500);
+                }
+            }, 200);
+        }
+
+        // Show analysis results
+        function showAnalysisResults() {
+            // Randomly select a fish from database
+            const randomFish = fishDatabase[Math.floor(Math.random() * fishDatabase.length)];
+            const confidence = (Math.random() * 10 + 90).toFixed(1); // 90-100%
+
+            // Update UI with results
+            fishName.textContent = randomFish.commonName;
+            scientificName.textContent = randomFish.scientificName;
+            confidenceScore.textContent = `${confidence}%`;
+            confidencePercent.textContent = `${confidence}%`;
+            confidenceBar.style.width = `${confidence}%`;
+            fishDescription.textContent = randomFish.description;
+            fishSize.textContent = randomFish.size;
+            fishHabitat.textContent = randomFish.habitat;
+            fishRegion.textContent = randomFish.region;
+            fishDiet.textContent = randomFish.diet;
+
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Reset analysis
+        function resetAnalysis() {
+            currentImage = null;
+            previewImage.src = '';
+            imageUpload.value = '';
+            analyzeBtn.disabled = true;
+            analyzeBtn.classList.add('disabled:opacity-50', 'disabled:cursor-not-allowed');
+            resultsSection.classList.add('hidden');
+            
+            // Scroll to upload section
+            dropZone.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Share results
+        function shareResults() {
+            const fish = fishName.textContent;
+            const confidence = confidenceScore.textContent;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'FishAI Analysis Results',
+                    text: `I identified a ${fish} with ${confidence} confidence using FishAI!`,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                const text = `Check out my FishAI analysis! I identified a ${fish} with ${confidence} confidence.`;
+                prompt('Copy this link to share:', text);
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            initEventListeners();
+            
+            // Add welcome message to chat
+            setTimeout(() => {
+                if (!chatOpen) {
+                    const toggleBtn = document.getElementById('chatbotToggleFixed');
+                    if (toggleBtn) {
+                        toggleBtn.querySelector('span').classList.add('animate-pulse');
+                    }
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

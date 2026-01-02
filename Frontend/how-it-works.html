@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works - FishAI</title>
+    <meta name="description" content="Learn how FishAI uses artificial intelligence to identify fish species">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e40af",
+                        secondary: "#0ea5e9",
+                        accent: "#10b981",
+                        dark: "#1e293b",
+                        light: "#f8fafc"
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
+    <!-- Include Header -->
+    <div id="header"></div>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            });
+    </script>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-dark mb-4">How FishAI Works</h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Discover the technology behind our accurate fish species identification system</p>
+        </section>
+
+        <!-- Process Steps -->
+        <div class="max-w-4xl mx-auto mb-16">
+            <!-- Step 1 -->
+            <div class="flex flex-col md:flex-row items-center mb-12">
+                <div class="md:w-1/3 mb-6 md:mb-0">
+                    <div class="w-40 h-40 mx-auto bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+                        <span class="text-white text-6xl font-bold">1</span>
+                    </div>
+                </div>
+                <div class="md:w-2/3">
+                    <h2 class="text-2xl font-bold text-dark mb-4">Image Upload</h2>
+                    <p class="text-gray-600 mb-4">Upload a clear image of any fish through our intuitive interface. Our system accepts various image formats and provides instant feedback on image quality.</p>
+                    <div class="bg-white rounded-2xl p-6 shadow-lg">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-cloud-upload-alt text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-dark">Supported Formats</h3>
+                                <p class="text-gray-600 text-sm">JPG, PNG, WebP up to 10MB</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="flex flex-col md:flex-row items-center mb-12">
+                <div class="md:w-1/3 mb-6 md:mb-0 order-2 md:order-1">
+                    <div class="w-40 h-40 mx-auto bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+                        <span class="text-white text-6xl font-bold">2</span>
+                    </div>
+                </div>
+                <div class="md:w-2/3 order-1 md:order-2">
+                    <h2 class="text-2xl font-bold text-dark mb-4">AI Processing</h2>
+                    <p class="text-gray-600 mb-4">Our deep learning model analyzes the image using convolutional neural networks (CNNs) to extract visual features and patterns unique to each fish species.</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white rounded-xl p-4 shadow-sm">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-shapes text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-dark">Feature Extraction</h4>
+                                    <p class="text-gray-600 text-sm">Shape, color, patterns</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 shadow-sm">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-brain text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-dark">Neural Network</h4>
+                                    <p class="text-gray-600 text-sm">Deep learning analysis</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="flex flex-col md:flex-row items-center mb-12">
+                <div class="md:w-1/3 mb-6 md:mb-0">
+                    <div class="w-40 h-40 mx-auto bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+                        <span class="text-white text-6xl font-bold">3</span>
+                    </div>
+                </div>
+                <div class="md:w-2/3">
+                    <h2 class="text-2xl font-bold text-dark mb-4">Database Comparison</h2>
+                    <p class="text-gray-600 mb-4">The extracted features are compared against our extensive database of 150+ fish species using similarity algorithms to find the closest match.</p>
+                    <div class="bg-gradient-to-r from-primary to-secondary text-white rounded-2xl p-6">
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <div class="text-2xl font-bold">150+</div>
+                                <div class="text-blue-100">Species</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold">50K+</div>
+                                <div class="text-blue-100">Images</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold">98.5%</div>
+                                <div class="text-blue-100">Accuracy</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/3 mb-6 md:mb-0 order-2 md:order-1">
+                    <div class="w-40 h-40 mx-auto bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+                        <span class="text-white text-6xl font-bold">4</span>
+                    </div>
+                </div>
+                <div class="md:w-2/3 order-1 md:order-2">
+                    <h2 class="text-2xl font-bold text-dark mb-4">Results & Information</h2>
+                    <p class="text-gray-600 mb-4">Receive detailed identification results including species name, confidence score, habitat information, diet, and conservation status.</p>
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-dark">Clownfish</h3>
+                                <p class="text-gray-500">Amphiprioninae</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-primary">94.7%</div>
+                                <div class="text-sm text-gray-500">Confidence</div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-water text-primary mr-3"></i>
+                                <div>
+                                    <p class="text-sm text-gray-500">Habitat</p>
+                                    <p class="font-medium">Coral Reefs</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-utensils text-primary mr-3"></i>
+                                <div>
+                                    <p class="text-sm text-gray-500">Diet</p>
+                                    <p class="font-medium">Omnivore</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-12">
+            <h2 class="text-2xl font-bold text-dark mb-6 text-center">Our Technology Stack</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-center p-6 bg-blue-50 rounded-xl">
+                    <i class="fas fa-brain text-primary text-3xl mb-4"></i>
+                    <h3 class="font-bold text-dark mb-2">Deep Learning</h3>
+                    <p class="text-gray-600 text-sm">CNN-based models trained on thousands of images</p>
+                </div>
+                <div class="text-center p-6 bg-green-50 rounded-xl">
+                    <i class="fas fa-database text-accent text-3xl mb-4"></i>
+                    <h3 class="font-bold text-dark mb-2">Big Data</h3>
+                    <p class="text-gray-600 text-sm">50K+ image database with metadata</p>
+                </div>
+                <div class="text-center p-6 bg-purple-50 rounded-xl">
+                    <i class="fas fa-bolt text-purple-600 text-3xl mb-4"></i>
+                    <h3 class="font-bold text-dark mb-2">Fast Processing</h3>
+                    <p class="text-gray-600 text-sm">Average analysis time under 2 seconds</p>
+                </div>
+                <div class="text-center p-6 bg-yellow-50 rounded-xl">
+                    <i class="fas fa-chart-line text-yellow-600 text-3xl mb-4"></i>
+                    <h3 class="font-bold text-dark mb-2">Continuous Learning</h3>
+                    <p class="text-gray-600 text-sm">Model improves with each identification</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Try It Out CTA -->
+        <div class="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 text-center text-white">
+            <h2 class="text-2xl font-bold mb-4">Ready to Try FishAI?</h2>
+            <p class="text-blue-100 mb-6 max-w-2xl mx-auto">Upload your first fish image and experience the power of AI-powered identification</p>
+            <a href="index.html" class="inline-block bg-white text-primary px-8 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors">
+                <i class="fas fa-fish mr-2"></i>Try Now
+            </a>
+        </div>
+    </main>
+
+    <!-- Include Footer -->
+    <div id="footer"></div>
+    <script>
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            });
+    </script>
+
+    <!-- Chatbot Components will be loaded here -->
+    <div id="chatbot-components"></div>
+    <script src="chatbot.js"></script>
+</body>
+</html>

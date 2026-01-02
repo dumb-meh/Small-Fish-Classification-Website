@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish Database - FishAI</title>
+    <meta name="description" content="Browse our extensive database of fish species with detailed information">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e40af",
+                        secondary: "#0ea5e9",
+                        accent: "#10b981",
+                        dark: "#1e293b",
+                        light: "#f8fafc"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
+    <!-- Include Header -->
+    <div id="header"></div>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            });
+    </script>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-dark mb-4">Fish Species Database</h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Explore our comprehensive database of fish species with detailed information, habitats, and characteristics.</p>
+            
+            <!-- Search Bar -->
+            <div class="max-w-2xl mx-auto mt-8">
+                <div class="relative">
+                    <input type="text" placeholder="Search fish species..." class="w-full p-4 pl-12 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <button class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition-colors">
+                        Search
+                    </button>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 mt-4">
+                    <button class="px-4 py-2 bg-white rounded-full border border-gray-300 hover:border-primary transition-colors">Freshwater</button>
+                    <button class="px-4 py-2 bg-white rounded-full border border-gray-300 hover:border-primary transition-colors">Saltwater</button>
+                    <button class="px-4 py-2 bg-white rounded-full border border-gray-300 hover:border-primary transition-colors">Tropical</button>
+                    <button class="px-4 py-2 bg-white rounded-full border border-gray-300 hover:border-primary transition-colors">Aquarium</button>
+                    <button class="px-4 py-2 bg-white rounded-full border border-gray-300 hover:border-primary transition-colors">Endangered</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Database Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+            <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                <div class="text-3xl font-bold text-primary mb-2">150+</div>
+                <p class="text-gray-600">Species</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                <div class="text-3xl font-bold text-primary mb-2">50+</div>
+                <p class="text-gray-600">Families</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                <div class="text-3xl font-bold text-primary mb-2">12</div>
+                <p class="text-gray-600">Habitats</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                <div class="text-3xl font-bold text-primary mb-2">25</div>
+                <p class="text-gray-600">Countries</p>
+            </div>
+        </div>
+
+        <!-- Fish Grid -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold text-dark mb-6">Popular Fish Species</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Fish Card 1 -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                    <img src="https://picsum.photos/400/250?random=201" alt="Clownfish" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-xl font-bold text-dark">Clownfish</h3>
+                                <p class="text-gray-500 text-sm">Amphiprioninae</p>
+                            </div>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Least Concern</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Brightly colored fish known for symbiotic relationship with sea anemones.</p>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="flex items-center">
+                                <i class="fas fa-ruler text-primary mr-2"></i>
+                                <span>10-18 cm</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-water text-primary mr-2"></i>
+                                <span>Coral Reefs</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-globe-americas text-primary mr-2"></i>
+                                <span>Indo-Pacific</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-utensils text-primary mr-2"></i>
+                                <span>Omnivore</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fish Card 2 -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                    <img src="https://picsum.photos/400/250?random=202" alt="Betta Fish" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-xl font-bold text-dark">Betta Fish</h3>
+                                <p class="text-gray-500 text-sm">Betta splendens</p>
+                            </div>
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-3 py-1 rounded-full">Vulnerable</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Known for vibrant colors and elaborate fins. Can breathe atmospheric air.</p>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="flex items-center">
+                                <i class="fas fa-ruler text-primary mr-2"></i>
+                                <span>6-8 cm</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-water text-primary mr-2"></i>
+                                <span>Rice Paddies</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-globe-americas text-primary mr-2"></i>
+                                <span>Southeast Asia</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-utensils text-primary mr-2"></i>
+                                <span>Carnivore</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fish Card 3 -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                    <img src="https://picsum.photos/400/250?random=203" alt="Goldfish" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-xl font-bold text-dark">Goldfish</h3>
+                                <p class="text-gray-500 text-sm">Carassius auratus</p>
+                            </div>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Domesticated</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">One of the most common aquarium fish, domesticated from wild carp.</p>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="flex items-center">
+                                <i class="fas fa-ruler text-primary mr-2"></i>
+                                <span>15-30 cm</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-water text-primary mr-2"></i>
+                                <span>Freshwater</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-globe-americas text-primary mr-2"></i>
+                                <span>Worldwide</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-utensils text-primary mr-2"></i>
+                                <span>Omnivore</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fish Card 4 -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                    <img src="https://picsum.photos/400/250?random=204" alt="Angelfish" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-xl font-bold text-dark">Angelfish</h3>
+                                <p class="text-gray-500 text-sm">Pterophyllum</p>
+                            </div>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Least Concern</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Known for distinctive triangular shape and long fins. Cichlids native to Amazon.</p>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="flex items-center">
+                                <i class="fas fa-ruler text-primary mr-2"></i>
+                                <span>15-20 cm</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-water text-primary mr-2"></i>
+                                <span>Amazon Rivers</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-globe-americas text-primary mr-2"></i>
+                                <span>South America</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-utensils text-primary mr-2"></i>
+                                <span>Omnivore</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fish Card 5 -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                    <img src="https://picsum.photos/400/250?random=205" alt="Guppy" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-xl font-bold text-dark">Guppy</h3>
+                                <p class="text-gray-500 text-sm">Poecilia reticulata</p>
+                            </div>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Least Concern</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Small, colorful livebearer fish known for rapid reproduction.</p>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="flex items-center">
+                                <i class="fas fa-ruler text-primary mr-2"></i>
+                                <span>4-6 cm</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-water text-primary mr-2"></i>
+                                <span>Freshwater Streams</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-globe-americas text-primary mr-2"></i>
+                                <span>South America</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-utensils text-primary mr-2"></i>
+                                <span>Omnivore</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fish Card 6 -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                    <img src="https://picsum.photos/400/250?random=206" alt="Discus Fish" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-xl font-bold text-dark">Discus Fish</h3>
+                                <p class="text-gray-500 text-sm">Symphysodon</p>
+                            </div>
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-3 py-1 rounded-full">Near Threatened</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Known for their distinctive disk-shaped bodies and vibrant colors.</p>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="flex items-center">
+                                <i class="fas fa-ruler text-primary mr-2"></i>
+                                <span>15-20 cm</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-water text-primary mr-2"></i>
+                                <span>Amazon Basin</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-globe-americas text-primary mr-2"></i>
+                                <span>South America</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-utensils text-primary mr-2"></i>
+                                <span>Omnivore</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Habitat Information -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold text-dark mb-6">Common Habitats</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-2xl p-6">
+                    <i class="fas fa-water text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Coral Reefs</h3>
+                    <p class="opacity-90">Biodiverse underwater ecosystems home to thousands of fish species including clownfish, angelfish, and parrotfish.</p>
+                    <div class="mt-4 text-sm opacity-80">200+ Species</div>
+                </div>
+                <div class="bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-2xl p-6">
+                    <i class="fas fa-tree text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Freshwater Rivers</h3>
+                    <p class="opacity-90">Home to species like catfish, trout, and bass. Includes lakes, rivers, and streams worldwide.</p>
+                    <div class="mt-4 text-sm opacity-80">150+ Species</div>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-2xl p-6">
+                    <i class="fas fa-home text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Home Aquariums</h3>
+                    <p class="opacity-90">Popular aquarium fish including goldfish, bettas, guppies, and tetras kept worldwide as pets.</p>
+                    <div class="mt-4 text-sm opacity-80">100+ Species</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Include Footer -->
+    <div id="footer"></div>
+    <script>
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            });
+    </script>
+
+    <!-- Chatbot Components will be loaded here -->
+    <div id="chatbot-components"></div>
+    <script src="chatbot.js"></script>
+</body>
+</html>

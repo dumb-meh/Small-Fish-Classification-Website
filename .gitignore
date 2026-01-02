@@ -1,0 +1,3 @@
+# Ignore specific frontend file
+Frontend/fish-classification-website.html
+.env

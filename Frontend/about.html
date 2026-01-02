@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - FishAI</title>
+    <meta name="description" content="Learn about FishAI and our mission to make fish identification accessible to everyone">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e40af",
+                        secondary: "#0ea5e9",
+                        accent: "#10b981",
+                        dark: "#1e293b",
+                        light: "#f8fafc"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
+    <!-- Include Header -->
+    <div id="header"></div>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            });
+    </script>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-dark mb-4">About FishAI</h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Making fish identification accessible through artificial intelligence and machine learning</p>
+        </section>
+
+        <!-- Mission Section -->
+        <div class="max-w-4xl mx-auto mb-16">
+            <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <div class="flex items-start space-x-6">
+                    <div class="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-bullseye text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-dark mb-4">Our Mission</h2>
+                        <p class="text-gray-600 mb-4">FishAI was created with a simple but powerful mission: to make fish identification accessible to everyone, from marine biologists and conservationists to aquarium hobbyists and curious beachgoers.</p>
+                        <p class="text-gray-600">We believe that understanding and appreciating aquatic life should not require years of specialized training. By leveraging cutting-edge artificial intelligence, we're democratizing marine biology and fostering greater awareness of our planet's aquatic ecosystems.</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Team Section -->
+            <div class="mb-16">
+                <h2 class="text-2xl font-bold text-dark mb-8 text-center">Meet Our Team</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                        <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-primary text-3xl"></i>
+                        </div>
+                        <h3 class="font-bold text-dark mb-1">S.M Rafi</h3>
+                        <p class="text-primary text-sm mb-3">Undergraduate Student</p>
+                        <p class="text-gray-600 text-sm">Leader of this thesis project, gaining experience in the field of Deep learning.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                        <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-primary text-3xl"></i>
+                        </div>
+                        <h3 class="font-bold text-dark mb-1">Michael Rodriguez</h3>
+                        <p class="text-primary text-sm mb-3">AI Research Director</p>
+                        <p class="text-gray-600 text-sm">Machine learning specialist with expertise in computer vision and neural networks.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                        <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-primary text-3xl"></i>
+                        </div>
+                        <h3 class="font-bold text-dark mb-1">Dr. James Wilson</h3>
+                        <p class="text-primary text-sm mb-3">Conservation Director</p>
+                        <p class="text-gray-600 text-sm">Former director of Ocean Conservation Society with 20+ years in marine protection.</p>
+                    </div>
+                </div>
+            </div>
+
+
+    <!-- Include Footer -->
+    <div id="footer"></div>
+    <script>
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            });
+    </script>
+
+    <!-- Chatbot Components will be loaded here -->
+    <div id="chatbot-components"></div>
+    <script src="chatbot.js"></script>
+</body>
+</html>
