@@ -1,7 +1,11 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify
 from flask_cors import CORS
 import os
+from dotenv import load_dotenv
 from Backend.backend import ChatSessionManager
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__, 
             template_folder='Frontend',
@@ -14,7 +18,7 @@ chat_manager = ChatSessionManager()
 @app.route('/')
 def index():
     """Serve the main index.html page"""
-    return send_from_directory('../Frontend', 'index.html')
+    return send_from_directory('Frontend', 'index.html')
 
 @app.route('/<path:filename>')
 def serve_html(filename):
@@ -24,8 +28,8 @@ def serve_html(filename):
         return "File not found", 404
     
     # Serve other HTML and static files
-    if os.path.exists(os.path.join('../Frontend', filename)):
-        return send_from_directory('../Frontend', filename)
+    if os.path.exists(os.path.join('Frontend', filename)):
+        return send_from_directory('Frontend', filename)
     return "File not found", 404
 
 @app.route('/api/chat', methods=['POST'])
