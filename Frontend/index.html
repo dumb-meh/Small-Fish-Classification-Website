@@ -387,14 +387,14 @@
                                 </div>
                                 <div>
                                     <p class="font-medium text-dark mb-1">FishAI Assistant</p>
-                                    <p class="text-gray-700">Hello! I'm your fish expert assistant. You can:</p>
+                                    <p class="text-gray-700">Hello! I'm your Bangladesh small fish expert assistant. I can help you with:</p>
                                     <ul class="list-disc pl-4 text-gray-700 mt-1 space-y-1">
-                                        <li>Upload fish images for identification</li>
-                                        <li>Ask questions about fish species</li>
-                                        <li>Get information about fish habitats and behavior</li>
-                                        <li>Learn about fish conservation</li>
+                                        <li>Information about small fishes found in Bangladesh</li>
+                                        <li>Fish habitats and behavior in Bangladesh</li>
+                                        <li>Local fish species identification</li>
+                                        <li>Fish farming practices in Bangladesh</li>
                                     </ul>
-                                    <p class="text-gray-700 mt-2">How can I help you today?</p>
+                                    <p class="text-gray-700 mt-2">What would you like to know about Bangladesh's small fishes?</p>
                                 </div>
                             </div>
                         </div>
@@ -641,7 +641,7 @@
                 }
             }
 
-            function sendChatMessage() {
+            async function sendChatMessage() {
                 const chatInput = document.getElementById('chatInput');
                 const chatMessages = document.getElementById('chatMessages');
                 const message = chatInput.value.trim();
@@ -651,11 +651,38 @@
                 addChatMessage(message, 'user');
                 chatInput.value = '';
 
-                // Simulate AI response
-                setTimeout(() => {
-                    const randomResponse = chatbotResponses[Math.floor(Math.random() * chatbotResponses.length)];
-                    addChatMessage(randomResponse, 'ai');
-                }, 1000);
+                // Add typing indicator
+                const typingIndicator = addTypingIndicator();
+
+                try {
+                    // Send message to backend API
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            session_id: 'fish_expert'
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    // Remove typing indicator
+                    typingIndicator.remove();
+
+                    if (data.success) {
+                        // Add AI response
+                        addChatMessage(data.response, 'ai');
+                    } else {
+                        addChatMessage('Sorry, I encountered an error. Please try again.', 'ai');
+                    }
+                } catch (error) {
+                    console.error('Chat error:', error);
+                    typingIndicator.remove();
+                    addChatMessage('Sorry, I could not connect to the server. Please check if the server is running.', 'ai');
+                }
             }
 
             function addChatMessage(text, sender) {
@@ -679,6 +706,33 @@
                 
                 chatMessages.appendChild(messageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function addTypingIndicator() {
+                const chatMessages = document.getElementById('chatMessages');
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'chat-message bg-blue-50 rounded-2xl rounded-tl-none';
+                typingDiv.id = 'typingIndicator';
+                
+                typingDiv.innerHTML = `
+                    <div class="flex items-start space-x-2">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-dark mb-1">FishAI Assistant</p>
+                            <div class="flex space-x-1">
+                                <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0s"></span>
+                                <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                                <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return typingDiv;
             }
 
             function handleChatImageUpload(file) {
