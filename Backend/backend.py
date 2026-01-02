@@ -6,7 +6,18 @@ from datetime import datetime
 
 class CachedChatHistory:
     def __init__(self, session_id: str = "default"):
-        self.client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+        api_key = os.getenv("GROQ_API_KEY")
+        print(f"[Backend] Initializing CachedChatHistory for session: {session_id}")
+        print(f"[Backend] API Key present: {bool(api_key)}")
+        print(f"[Backend] API Key length: {len(api_key) if api_key else 0}")
+        
+        try:
+            self.client = Groq(api_key=api_key)
+            print(f"[Backend] Groq client initialized successfully")
+        except Exception as e:
+            print(f"[Backend] ERROR initializing Groq client: {e}")
+            raise
+            
         self.model = "llama-3.1-8b-instant"
         self.session_id = session_id
         self.cache_file = f"chat_history_{session_id}.json"
@@ -71,20 +82,35 @@ Examples of unacceptable questions (you must politely refuse):
     
     def get_response(self, user_message: str) -> str:
         """Get response using full chat history"""
+        print(f"[Backend] get_response called with message: {user_message[:50]}...")
+        
         # Add user message to history
         self.add_to_history("user", user_message)
+        print(f"[Backend] User message added to history. Total messages: {len(self.conversation_history)}")
         
         try:
+            print(f"[Backend] Calling Groq API with model: {self.model}")
+            print(f"[Backend] Number of messages in history: {len(self.conversation_history)}")
+            
+            # Prepare messages for API (remove timestamp field)
+            api_messages = [
+                {"role": msg["role"], "content": msg["content"]}
+                for msg in self.conversation_history
+            ]
+            print(f"[Backend] API messages prepared (without timestamps)")
+            
             # Call API with entire conversation history (including system prompt)
             completion = self.client.chat.completions.create(
                 model=self.model,
-                messages=self.conversation_history,
+                messages=api_messages,
                 temperature=0.3,  # Lower temperature for more consistent responses
                 max_tokens=512,
                 top_p=0.9
             )
             
+            print(f"[Backend] API call successful")
             assistant_response = completion.choices[0].message.content
+            print(f"[Backend] Assistant response received: {assistant_response[:50]}...")
             
             # Add assistant response to history
             self.add_to_history("assistant", assistant_response)
@@ -92,7 +118,11 @@ Examples of unacceptable questions (you must politely refuse):
             return assistant_response
             
         except Exception as e:
-            return f"Error: {str(e)}"
+            error_msg = f"Error: {str(e)}"
+            print(f"[Backend] ERROR in get_response: {error_msg}")
+            print(f"[Backend] Exception type: {type(e).__name__}")
+            print(f"[Backend] Full error: {repr(e)}")
+            return error_msg
     
     def clear_history(self):
         """Clear conversation history (keep system prompt)"""

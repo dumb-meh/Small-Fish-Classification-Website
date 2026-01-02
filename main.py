@@ -7,13 +7,31 @@ from Backend.backend import ChatSessionManager
 # Load environment variables from .env file
 load_dotenv()
 
+print("\n" + "="*60)
+print("[Flask] Starting Fish Classification Website")
+print("="*60)
+api_key = os.getenv("GROQ_API_KEY")
+print(f"[Flask] GROQ_API_KEY loaded: {bool(api_key)}")
+if api_key:
+    print(f"[Flask] API Key length: {len(api_key)} characters")
+    print(f"[Flask] API Key starts with: {api_key[:10]}...")
+else:
+    print("[Flask] WARNING: GROQ_API_KEY not found!")
+print("="*60 + "\n")
+
 app = Flask(__name__, 
             template_folder='Frontend',
             static_folder='Frontend')
 CORS(app)  # Enable CORS for all routes
 
 # Initialize chat session manager
-chat_manager = ChatSessionManager()
+print("[Flask] Initializing ChatSessionManager...")
+try:
+    chat_manager = ChatSessionManager()
+    print("[Flask] ChatSessionManager initialized successfully\n")
+except Exception as e:
+    print(f"[Flask] ERROR initializing ChatSessionManager: {e}\n")
+    raise
 
 @app.route('/')
 def index():
@@ -38,10 +56,16 @@ def chat():
     Handle chat requests from the frontend chatbot
     Expected JSON format: {"message": "user message", "session_id": "optional_session_id"}
     """
+    print("\n" + "="*60)
+    print("[Flask] /api/chat endpoint called")
+    print("="*60)
+    
     try:
         data = request.get_json()
+        print(f"[Flask] Request data received: {data}")
         
         if not data or 'message' not in data:
+            print("[Flask] ERROR: No message in request data")
             return jsonify({
                 'success': False,
                 'error': 'No message provided'
@@ -50,19 +74,38 @@ def chat():
         user_message = data['message']
         session_id = data.get('session_id', 'default')
         
+        print(f"[Flask] User message: {user_message}")
+        print(f"[Flask] Session ID: {session_id}")
+        
         # Get or create chat session
+        print(f"[Flask] Getting chat session...")
         session = chat_manager.get_session(session_id)
+        print(f"[Flask] Chat session obtained: {session}")
         
         # Get response from the chatbot
+        print(f"[Flask] Calling get_response...")
         bot_response = session.get_response(user_message)
+        print(f"[Flask] Bot response received: {bot_response[:100]}...")
         
-        return jsonify({
+        response_data = {
             'success': True,
             'response': bot_response,
             'session_id': session_id
-        })
+        }
+        print(f"[Flask] Sending successful response")
+        print("="*60 + "\n")
+        
+        return jsonify(response_data)
     
     except Exception as e:
+        print(f"[Flask] ERROR in /api/chat: {str(e)}")
+        print(f"[Flask] Exception type: {type(e).__name__}")
+        print(f"[Flask] Full error: {repr(e)}")
+        import traceback
+        print(f"[Flask] Traceback:")
+        traceback.print_exc()
+        print("="*60 + "\n")
+        
         return jsonify({
             'success': False,
             'error': str(e)

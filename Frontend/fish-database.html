@@ -26,6 +26,20 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
+        
+        .chat-message {
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chatbot-toggle {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
@@ -290,7 +304,7 @@
             });
     </script>
 
-    <!-- Chatbot Components will be loaded here -->
+    <!-- Chatbot Components -->
     <div id="chatbot-components"></div>
     <script src="chatbot.js"></script>
 </body>
