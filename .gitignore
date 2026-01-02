@@ -1,3 +1,7 @@
 # Ignore specific frontend file
 Frontend/fish-classification-website.html
+
+# Ignore chat history files
+chat/
+*.json
 .env

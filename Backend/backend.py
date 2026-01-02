@@ -20,7 +20,14 @@ class CachedChatHistory:
             
         self.model = "llama-3.1-8b-instant"
         self.session_id = session_id
-        self.cache_file = f"chat_history_{session_id}.json"
+        
+        # Create chat directory if it doesn't exist
+        self.chat_dir = "chat"
+        if not os.path.exists(self.chat_dir):
+            os.makedirs(self.chat_dir)
+            print(f"[Backend] Created chat directory: {self.chat_dir}")
+        
+        self.cache_file = os.path.join(self.chat_dir, f"chat_history_{session_id}.json")
         
         # STRICT SYSTEM PROMPT
         self.system_prompt = """You are an expert on small fishes in Bangladesh. 
