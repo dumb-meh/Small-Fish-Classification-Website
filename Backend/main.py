@@ -10,6 +10,28 @@ class CachedChatHistory:
         self.model = "llama-3.1-8b-instant"
         self.session_id = session_id
         self.cache_file = f"chat_history_{session_id}.json"
+        
+        # STRICT SYSTEM PROMPT
+        self.system_prompt = """You are an expert on small fishes in Bangladesh. 
+Your ONLY purpose is to answer questions about small fishes found in Bangladesh.
+You MUST follow these rules STRICTLY:
+1. ONLY answer questions about small fishes in Bangladesh
+2. For any question NOT about small fishes in Bangladesh, respond: "Sorry, I can only answer questions about small fishes in Bangladesh. Please ask about small fishes."
+3. Do not engage in any other conversation topics
+4. Do not answer questions about other countries' fishes unless specifically compared to Bangladesh
+5. Stay strictly on topic at all times
+
+Examples of acceptable questions:
+- "What are the common small fishes in Bangladesh?"
+- "Tell me about Puti fish"
+- "How are small fishes farmed in Bangladesh?"
+
+Examples of unacceptable questions (you must politely refuse):
+- "What's the weather like today?" → "Sorry, I can only answer questions about small fishes in Bangladesh."
+- "Tell me a joke" → "Sorry, I can only answer questions about small fishes in Bangladesh."
+- "What about sharks?" → "Sorry, sharks are not small fishes. I can only answer about small fishes in Bangladesh."
+"""
+        
         self.conversation_history: List[Dict] = self._load_history()
         
     def _load_history(self) -> List[Dict]:
@@ -19,7 +41,8 @@ class CachedChatHistory:
                 data = json.load(f)
                 return data.get("messages", [])
         except (FileNotFoundError, json.JSONDecodeError):
-            return []
+            # Initialize with system prompt
+            return [{"role": "system", "content": self.system_prompt}]
     
     def _save_history(self):
         """Save chat history to file"""
@@ -38,9 +61,12 @@ class CachedChatHistory:
             "content": content,
             "timestamp": datetime.now().isoformat()
         })
-        # Keep last 20 messages to avoid context overflow
-        if len(self.conversation_history) > 20:
-            self.conversation_history = self.conversation_history[-20:]
+        # Keep last 15 messages + system prompt to avoid context overflow
+        if len(self.conversation_history) > 16:  # 1 system + 15 conversation
+            # Keep system prompt and recent messages
+            system_msg = self.conversation_history[0]
+            recent_msgs = self.conversation_history[-15:]
+            self.conversation_history = [system_msg] + recent_msgs
         self._save_history()
     
     def get_response(self, user_message: str) -> str:
@@ -49,12 +75,13 @@ class CachedChatHistory:
         self.add_to_history("user", user_message)
         
         try:
-            # Call API with entire conversation history
+            # Call API with entire conversation history (including system prompt)
             completion = self.client.chat.completions.create(
                 model=self.model,
                 messages=self.conversation_history,
-                temperature=0.7,
-                max_tokens=1024
+                temperature=0.3,  # Lower temperature for more consistent responses
+                max_tokens=512,
+                top_p=0.9
             )
             
             assistant_response = completion.choices[0].message.content
@@ -68,18 +95,30 @@ class CachedChatHistory:
             return f"Error: {str(e)}"
     
     def clear_history(self):
-        """Clear conversation history"""
-        self.conversation_history = []
+        """Clear conversation history (keep system prompt)"""
+        system_prompt = [msg for msg in self.conversation_history if msg["role"] == "system"]
+        if not system_prompt:
+            system_prompt = [{"role": "system", "content": self.system_prompt}]
+        self.conversation_history = system_prompt
         self._save_history()
-        print(f"Chat history cleared for session: {self.session_id}")
+        print(f"Chat history cleared for session: {self.session_id} (kept system prompt)")
     
     def show_history(self):
         """Display conversation history"""
         print(f"\n=== Chat History ({self.session_id}) ===")
-        for msg in self.conversation_history:
+        for i, msg in enumerate(self.conversation_history):
             role = msg["role"].upper()
-            content = msg["content"][:100] + "..." if len(msg["content"]) > 100 else msg["content"]
-            print(f"{role}: {content}")
+            if role == "SYSTEM":
+                content = "System prompt loaded..."
+            else:
+                content = msg["content"][:80] + "..." if len(msg["content"]) > 80 else msg["content"]
+            print(f"{i}. {role}: {content}")
+        print("=" * 40)
+    
+    def show_system_prompt(self):
+        """Display the system prompt"""
+        print("\n=== SYSTEM PROMPT ===")
+        print(self.system_prompt)
         print("=" * 40)
 
 # Multi-session manager
@@ -99,10 +138,15 @@ if __name__ == "__main__":
     manager = ChatSessionManager()
     
     # Start with default session or specify one
-    session = manager.get_session("my_chat")
+    session = manager.get_session("fish_expert")
     
-    print("Chatbot with history cache. Type 'quit' to exit.")
-    print("Commands: 'clear', 'history', 'switch [session_name]'")
+    print("=" * 60)
+    print("BANGLADESH SMALL FISH EXPERT CHATBOT")
+    print("I can ONLY answer questions about small fishes in Bangladesh.")
+    print("For anything else, I will politely refuse.")
+    print("=" * 60)
+    print("Commands: 'quit', 'clear', 'history', 'system', 'switch [session]'")
+    print("-" * 60)
     
     while True:
         try:
@@ -116,10 +160,14 @@ if __name__ == "__main__":
             elif user_input.lower() == 'history':
                 session.show_history()
                 continue
+            elif user_input.lower() == 'system':
+                session.show_system_prompt()
+                continue
             elif user_input.startswith('switch '):
                 new_session = user_input.split(' ', 1)[1]
                 session = manager.get_session(new_session)
                 print(f"Switched to session: {new_session}")
+                print("I can ONLY answer questions about small fishes in Bangladesh.")
                 continue
             
             response = session.get_response(user_input)
