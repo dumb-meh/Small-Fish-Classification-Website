@@ -3,6 +3,8 @@ from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 from Backend.backend import ChatSessionManager
+from Backend.image_classification import classify_image
+from Backend.database.fish_data import get_fish_data
 
 # Load environment variables from .env file
 load_dotenv()
@@ -110,6 +112,58 @@ def chat():
             'success': False,
             'error': str(e)
         }), 500
+
+
+@app.route('/api/classify', methods=['POST'])
+def classify():
+    """Handle image classification requests.
+    Expects multipart/form-data with field 'image' and optional 'session_id'.
+    """
+    print("\n" + "="*60)
+    print("[Flask] /api/classify endpoint called")
+    print("="*60)
+
+    try:
+        if 'image' not in request.files:
+            print("[Flask] No image file in request")
+            return jsonify({'success': False, 'error': 'No image file provided'}), 400
+
+        img = request.files['image']
+        session_id = request.form.get('session_id', 'default')
+
+        uploads_dir = os.path.join(os.getcwd(), 'uploads')
+        if not os.path.exists(uploads_dir):
+            os.makedirs(uploads_dir)
+            print(f"[Flask] Created uploads directory: {uploads_dir}")
+
+        # Save uploaded file
+        filename = f"{session_id}_{int(__import__('time').time())}_{img.filename}"
+        file_path = os.path.join(uploads_dir, filename)
+        img.save(file_path)
+        print(f"[Flask] Saved uploaded image to: {file_path}")
+
+        # Classify
+        label, confidence = classify_image(file_path)
+        print(f"[Flask] Classification result: {label} ({confidence})")
+
+        # Get static fish data if available
+        fish_info = get_fish_data(label)
+
+        response = {
+            'success': True,
+            'label': label,
+            'confidence': confidence,
+            'fish': fish_info
+        }
+        print(f"[Flask] /api/classify returning response")
+        print("="*60 + "\n")
+        return jsonify(response)
+
+    except Exception as e:
+        print(f"[Flask] ERROR in /api/classify: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/chat/clear', methods=['POST'])
 def clear_chat():

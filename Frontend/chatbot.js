@@ -303,6 +303,85 @@ function addTypingIndicator() {
     return typingDiv;
 }
 
+// Handle image uploads in chat: send to server for classification
+function handleChatImageUpload(file) {
+    console.log('[Chatbot] handleChatImageUpload called');
+
+    if (!file.type.match('image.*')) {
+        addChatMessage('Please upload an image file (JPG, PNG, GIF, etc.)', 'ai');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const chatMessages = document.getElementById('chatMessages');
+        // Add user message with image
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message ml-auto bg-primary text-white rounded-2xl rounded-tr-none p-3';
+        messageDiv.innerHTML = `
+            <div class="flex items-start space-x-2 flex-row-reverse space-x-reverse">
+                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-user text-white text-sm"></i>
+                </div>
+                <div class="text-right">
+                    <p class="font-medium text-blue-100 mb-1">You</p>
+                    <img src="${e.target.result}" alt="Uploaded fish image" class="max-w-xs rounded-lg mb-2">
+                    <p class="text-blue-100">Can you identify this fish?</p>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Now send image to backend
+        sendImageForClassification(file);
+    };
+    reader.readAsDataURL(file);
+}
+
+async function sendImageForClassification(file) {
+    console.log('[Chatbot] Sending image to /api/classify');
+    const typingIndicator = addTypingIndicator();
+
+    try {
+        const form = new FormData();
+        form.append('image', file);
+        form.append('session_id', getSessionId());
+
+        const resp = await fetch('/api/classify', {
+            method: 'POST',
+            body: form
+        });
+
+        console.log('[Chatbot] /api/classify status:', resp.status);
+        const data = await resp.json();
+        console.log('[Chatbot] /api/classify response:', data);
+
+        typingIndicator.remove();
+
+        if (data.success) {
+            const label = data.label || 'unknown';
+            const conf = data.confidence || 0;
+            const fish = data.fish;
+
+            let reply = `I think this is **${label}** (${(conf*100).toFixed(1)}% confident).`;
+            if (fish) {
+                reply += `\n${fish.name_bn} — ${fish.scientific_name}. ${fish.description}`;
+            } else {
+                reply += ' I could not find more information about this species.';
+            }
+
+            addChatMessage(reply, 'ai');
+        } else {
+            addChatMessage('Sorry, I could not classify the image: ' + (data.error || 'Unknown error'), 'ai');
+        }
+    } catch (err) {
+        console.error('[Chatbot] Error sending image:', err);
+        typingIndicator.remove();
+        addChatMessage('Sorry, there was a problem uploading the image: ' + err.message, 'ai');
+    }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[Chatbot] DOMContentLoaded event fired');

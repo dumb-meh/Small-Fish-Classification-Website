@@ -8,3 +8,8 @@ chat/
 
 # Ignore backend model files
 Backend/model/
+
+# Ignore uploaded images
+uploads/
+Backend/uploads/
+myenv/

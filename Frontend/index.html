@@ -70,6 +70,20 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
     </style>
+    <style>
+        /* Small badge styles for result meta */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(30,64,175,0.08);
+            color: #1e40af;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+        }
+    </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
     <!-- Include Header -->
@@ -144,6 +158,7 @@
                                 <div>
                                     <h4 class="text-xl font-bold text-dark" id="fishName">Clownfish</h4>
                                     <p class="text-gray-600" id="scientificName">Amphiprioninae</p>
+                                    <div id="fishMeta" class="mt-2 flex flex-wrap gap-2"></div>
                                 </div>
                                 <div class="text-right">
                                     <div class="text-2xl font-bold text-primary" id="confidenceScore">94.7%</div>
@@ -523,6 +538,7 @@
 
         // Current state
         let currentImage = null;
+        let currentFile = null; // raw File object for uploads
         let chatOpen = false;
         let messageCount = 0;
 
@@ -656,6 +672,8 @@
 
                 try {
                     // Send message to backend API
+                    const sessionId = sessionStorage.getItem('chatbot_session_id') || 'fish_expert';
+                    console.log('[Chat] Sending message', { message, session_id: sessionId });
                     const response = await fetch('/api/chat', {
                         method: 'POST',
                         headers: {
@@ -663,7 +681,7 @@
                         },
                         body: JSON.stringify({
                             message: message,
-                            session_id: 'fish_expert'
+                            session_id: sessionId
                         })
                     });
 
@@ -736,38 +754,12 @@
             }
 
             function handleChatImageUpload(file) {
-                if (!file.type.match('image.*')) {
-                    addChatMessage('Please upload an image file (JPG, PNG, GIF, etc.)', 'ai');
-                    return;
+                // Delegate to shared chatbot handler (defined in chatbot.js)
+                if (window && typeof window.handleChatImageUpload === 'function') {
+                    window.handleChatImageUpload(file);
+                } else {
+                    console.warn('Shared chatbot image handler not available');
                 }
-
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const chatMessages = document.getElementById('chatMessages');
-                    // Add user message with image
-                    const messageDiv = document.createElement('div');
-                    messageDiv.className = 'chat-message ml-auto bg-primary text-white rounded-2xl rounded-tr-none p-3';
-                    messageDiv.innerHTML = `
-                        <div class="flex items-start space-x-2 flex-row-reverse space-x-reverse">
-                            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-user text-white text-sm"></i>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-medium text-blue-100 mb-1">You</p>
-                                <img src="${e.target.result}" alt="Uploaded fish image" class="max-w-xs rounded-lg mb-2">
-                                <p class="text-blue-100">Can you identify this fish?</p>
-                            </div>
-                        </div>
-                    `;
-                    chatMessages.appendChild(messageDiv);
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                    // Simulate AI response
-                    setTimeout(() => {
-                        addChatMessage('Thanks for sharing the image! I can see this is a fish. For detailed classification with confidence scores, please use the main image analyzer above. It uses our advanced AI model to provide accurate species identification and detailed information.', 'ai');
-                    }, 1500);
-                };
-                reader.readAsDataURL(file);
             }
         }
 
@@ -786,6 +778,7 @@
             const reader = new FileReader();
             reader.onload = (e) => {
                 currentImage = e.target.result;
+                currentFile = file;
                 previewImage.src = currentImage;
                 analyzeBtn.disabled = false;
                 analyzeBtn.classList.remove('disabled:opacity-50', 'disabled:cursor-not-allowed');
@@ -797,40 +790,48 @@
             reader.readAsDataURL(file);
         }
 
-        // Analyze image (simulated)
+        // Analyze image (uploads to backend classifier)
         function analyzeImage() {
-            if (!currentImage) return;
+            if (!currentFile) return;
 
             // Show loading overlay
             loadingOverlay.classList.remove('hidden');
             loadingProgress.style.width = '0%';
-            loadingStatus.textContent = 'Processing image features...';
+            loadingStatus.textContent = 'Uploading image...';
 
-            // Simulate analysis progress
+            // Start a simple simulated progress while upload + classify happens
             let progress = 0;
             const interval = setInterval(() => {
-                progress += Math.random() * 20;
-                if (progress > 100) progress = 100;
+                progress += Math.random() * 12;
+                if (progress > 98) progress = 98; // leave room until response
                 loadingProgress.style.width = `${progress}%`;
-                
-                if (progress < 30) {
-                    loadingStatus.textContent = 'Extracting image features...';
-                } else if (progress < 60) {
-                    loadingStatus.textContent = 'Comparing with fish database...';
-                } else if (progress < 90) {
-                    loadingStatus.textContent = 'Calculating confidence scores...';
-                } else {
-                    loadingStatus.textContent = 'Finalizing results...';
-                }
+            }, 250);
 
-                if (progress >= 100) {
+            // Prepare form data and send to backend
+            const form = new FormData();
+            form.append('image', currentFile);
+            form.append('session_id', sessionStorage.getItem('chatbot_session_id') || 'anonymous');
+
+            fetch('/api/classify', { method: 'POST', body: form })
+                .then(res => res.json())
+                .then(data => {
                     clearInterval(interval);
+                    loadingProgress.style.width = `100%`;
+                    loadingStatus.textContent = 'Finalizing results...';
                     setTimeout(() => {
                         loadingOverlay.classList.add('hidden');
-                        showAnalysisResults();
+                        if (data && data.success) {
+                            showClassificationResults(data);
+                        } else {
+                            alert('Classification failed: ' + (data.error || 'Unknown error'));
+                        }
                     }, 500);
-                }
-            }, 200);
+                })
+                .catch(err => {
+                    clearInterval(interval);
+                    loadingOverlay.classList.add('hidden');
+                    alert('Error classifying image: ' + err.message);
+                });
         }
 
         // Show analysis results
@@ -850,6 +851,46 @@
             fishHabitat.textContent = randomFish.habitat;
             fishRegion.textContent = randomFish.region;
             fishDiet.textContent = randomFish.diet;
+
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Show classification results returned by server
+        function showClassificationResults(data) {
+            // data: { label, confidence, fish }
+            const fish = data.fish;
+            const confPercent = (data.confidence * 100).toFixed(1);
+
+            if (fish) {
+                fishName.textContent = fish.name_en || data.label;
+                scientificName.textContent = fish.scientific_name || '';
+                // Meta badges (region, diet)
+                const metaEl = document.getElementById('fishMeta');
+                metaEl.innerHTML = '';
+                if (fish.primary_rivers) metaEl.innerHTML += `<span class="badge">🌊 ${fish.primary_rivers}</span>`;
+                if (fish.diet) metaEl.innerHTML += `<span class="badge">🍽️ ${fish.diet}</span>`;
+                confidenceScore.textContent = `${confPercent}%`;
+                confidencePercent.textContent = `${confPercent}%`;
+                confidenceBar.style.width = `${confPercent}%`;
+                fishDescription.textContent = fish.description || '';
+                fishSize.textContent = fish.size || '';
+                fishHabitat.textContent = fish.river_habitat || '';
+                fishRegion.textContent = fish.primary_rivers || '';
+                fishDiet.textContent = fish.diet || '';
+            } else {
+                // Fallback: show received label
+                fishName.textContent = data.label || 'Unknown';
+                scientificName.textContent = '';
+                confidenceScore.textContent = `${confPercent}%`;
+                confidencePercent.textContent = `${confPercent}%`;
+                confidenceBar.style.width = `${confPercent}%`;
+                fishDescription.textContent = 'No additional information available.';
+                fishSize.textContent = '';
+                fishHabitat.textContent = '';
+                fishRegion.textContent = '';
+                fishDiet.textContent = '';
+            }
 
             // Scroll to results
             resultsSection.scrollIntoView({ behavior: 'smooth' });

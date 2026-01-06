@@ -116,6 +116,19 @@ Get chat history for a session.
 ### GET /health
 Health check endpoint.
 
+### POST /api/classify
+Upload an image for classification. Accepts multipart/form-data with field `image` and optional `session_id`.
+
+**Response:**
+```json
+{
+  "success": true,
+  "label": "puti",
+  "confidence": 0.912,
+  "fish": { /* static fish data from Backend/database/fish_data.py */ }
+}
+```
+
 ## Chatbot Features
 
 - **Specialized Knowledge**: Focuses exclusively on small fishes in Bangladesh
