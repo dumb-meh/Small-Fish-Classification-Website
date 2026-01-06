@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - FishAI</title>
+    <meta name="description" content="Privacy Policy for FishAI - Learn how we protect your data">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e40af",
+                        secondary: "#0ea5e9",
+                        accent: "#10b981",
+                        dark: "#1e293b",
+                        light: "#f8fafc"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .chat-message {
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chatbot-toggle {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
+    <!-- Include Header -->
+    <div id="header"></div>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            });
+    </script>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-dark mb-4">Privacy Policy</h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">How we collect, use, and protect your information</p>
+        </section>
+
+        <!-- Content Section -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <div class="prose prose-lg max-w-none">
+                    <p class="text-gray-600 mb-6">Last updated: January 6, 2026</p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Introduction</h2>
+                    <p class="text-gray-600 mb-6">
+                        FishAI is a demonstration website developed as part of a Bachelor Degree thesis project. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our fish classification demonstration website. As this is an academic project, we are committed to protecting your privacy while providing this educational service.
+                    </p>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                        <p class="text-blue-700 font-semibold">Important Notice:</p>
+                        <p class="text-blue-600">This is a demonstration website created for educational purposes as part of a Bachelor Degree thesis. It is not a commercial service and should not be used for professional or commercial applications.</p>
+                    </div>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Information We Collect</h2>
+                    <h3 class="text-xl font-semibold text-dark mb-3">Images You Upload</h3>
+                    <p class="text-gray-600 mb-4">
+                        When you upload fish images for classification, we temporarily process these images using our AI model. Images are not permanently stored on our servers and are deleted immediately after processing.
+                    </p>
+                    
+                    <h3 class="text-xl font-semibold text-dark mb-3">Usage Data</h3>
+                    <p class="text-gray-600 mb-6">
+                        We may collect anonymous usage statistics, such as the number of classifications performed and general usage patterns, to improve our service. This data does not identify individual users.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">How We Use Your Information</h2>
+                    <ul class="list-disc list-inside text-gray-600 mb-6 space-y-2">
+                        <li>To provide fish classification services</li>
+                        <li>To improve our AI model's accuracy and performance</li>
+                        <li>To maintain and enhance our website functionality</li>
+                        <li>To generate anonymous usage analytics</li>
+                    </ul>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Data Sharing and Disclosure</h2>
+                    <p class="text-gray-600 mb-6">
+                        We do not sell, trade, or otherwise transfer your personal information to third parties. Images you upload are processed locally on our servers and are not shared with any external services or stored permanently.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Data Security</h2>
+                    <p class="text-gray-600 mb-6">
+                        We implement appropriate technical and organizational measures to protect the information we collect against unauthorized access, alteration, disclosure, or destruction. However, please note that no method of transmission over the internet is 100% secure.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Your Rights</h2>
+                    <p class="text-gray-600 mb-6">
+                        As this is a demonstration service, we do not retain personal data. If you have any concerns about your privacy or our practices, please contact us using the information provided below.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Changes to This Privacy Policy</h2>
+                    <p class="text-gray-600 mb-6">
+                        We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Contact Us</h2>
+                    <p class="text-gray-600 mb-6">
+                        If you have any questions about this Privacy Policy, please contact us:
+                    </p>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-gray-600"><strong>Email:</strong> shikdar.mohammad.rafi@gmail.com</p>
+                        <p class="text-gray-600"><strong>Phone:</strong> +880 1876-533891</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Include Footer -->
+    <div id="footer"></div>
+    <script>
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            });
+    </script>
+
+    <!-- Chatbot Components will be loaded here -->
+    <div id="chatbot-components"></div>
+    <script src="chatbot.js"></script>
+</body>
+</html>

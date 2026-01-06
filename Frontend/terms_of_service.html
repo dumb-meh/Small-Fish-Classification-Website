@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - FishAI</title>
+    <meta name="description" content="Terms of Service for FishAI - Read our terms and conditions">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e40af",
+                        secondary: "#0ea5e9",
+                        accent: "#10b981",
+                        dark: "#1e293b",
+                        light: "#f8fafc"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .chat-message {
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chatbot-toggle {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
+    <!-- Include Header -->
+    <div id="header"></div>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            });
+    </script>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-dark mb-4">Terms of Service</h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Please read these terms carefully before using our service</p>
+        </section>
+
+        <!-- Content Section -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <div class="prose prose-lg max-w-none">
+                    <p class="text-gray-600 mb-6">Last updated: January 6, 2026</p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Acceptance of Terms</h2>
+                    <p class="text-gray-600 mb-6">
+                        By accessing and using FishAI ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Description of Service</h2>
+                    <p class="text-gray-600 mb-6">
+                        FishAI is a demonstration platform developed as part of a Bachelor Degree thesis project. It uses artificial intelligence to classify small fish species from uploaded images. This service is provided solely for educational and demonstration purposes as part of academic research and is not intended for commercial use, professional marine biology applications, or any real-world decision-making.
+                    </p>
+                    
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                        <p class="text-yellow-700 font-semibold">Academic Project Notice:</p>
+                        <p class="text-yellow-600">This website is created exclusively for educational purposes as part of a Bachelor Degree thesis. It demonstrates AI-powered fish classification technology and should not be considered a production-ready service or used for any commercial or professional applications.</p>
+                    </div>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">User Responsibilities</h2>
+                    <ul class="list-disc list-inside text-gray-600 mb-6 space-y-2">
+                        <li>You must be at least 13 years old to use this service</li>
+                        <li>You agree to upload only appropriate images of fish for classification purposes</li>
+                        <li>You will not use the service for any illegal or unauthorized purpose</li>
+                        <li>You will not attempt to reverse engineer or modify the AI model</li>
+                        <li>You will not upload harmful, offensive, or copyrighted content</li>
+                    </ul>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Intellectual Property</h2>
+                    <p class="text-gray-600 mb-6">
+                        The Service and its original content, features, and functionality are and will remain the exclusive property of FishAI and its licensors. The service is protected by copyright, trademark, and other laws.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Disclaimer of Warranties</h2>
+                    <p class="text-gray-600 mb-6">
+                        The information on this website is provided on an "as is" basis. This is an academic demonstration project developed as part of a Bachelor Degree thesis. To the fullest extent permitted by law, FishAI excludes all representations, warranties, conditions, and terms whether express or implied, statutory or otherwise, including without limitation warranties of merchantability, fitness for a particular purpose, and non-infringement. The service is provided for educational purposes only and may contain errors or inaccuracies.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Limitation of Liability</h2>
+                    <p class="text-gray-600 mb-6">
+                        In no event shall FishAI, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your use of the service.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Accuracy of Classification</h2>
+                    <p class="text-gray-600 mb-6">
+                        FishAI provides classification results based on machine learning models developed as part of a Bachelor Degree thesis project. While we strive for accuracy, the results are not guaranteed to be correct and may contain errors typical of academic research projects. Users should not rely on this service for critical decisions, professional advice, scientific research, or any situation where accuracy is paramount. This is purely a demonstration of AI technology for educational purposes.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Termination</h2>
+                    <p class="text-gray-600 mb-6">
+                        We may terminate or suspend your access to our service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Governing Law</h2>
+                    <p class="text-gray-600 mb-6">
+                        These Terms shall be interpreted and governed by the laws of the jurisdiction in which FishAI operates, without regard to conflict of law provisions.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Changes to Terms</h2>
+                    <p class="text-gray-600 mb-6">
+                        We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will try to provide at least 30 days notice prior to any new terms taking effect.
+                    </p>
+                    
+                    <h2 class="text-2xl font-bold text-dark mb-4">Contact Information</h2>
+                    <p class="text-gray-600 mb-6">
+                        If you have any questions about these Terms of Service, please contact us:
+                    </p>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-gray-600"><strong>Email:</strong> shikdar.mohammad.rafi@gmail.com</p>
+                        <p class="text-gray-600"><strong>Phone:</strong> +880 1876-533891</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Include Footer -->
+    <div id="footer"></div>
+    <script>
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            });
+    </script>
+
+    <!-- Chatbot Components will be loaded here -->
+    <div id="chatbot-components"></div>
+    <script src="chatbot.js"></script>
+</body>
+</html>
