@@ -5,3 +5,6 @@ Frontend/fish-classification-website.html
 chat/
 *.json
 .env
+
+# Ignore backend model files
+Backend/model/
