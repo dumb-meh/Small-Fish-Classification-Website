@@ -143,8 +143,8 @@ def classify():
         print(f"[Flask] Saved uploaded image to: {file_path}")
 
         # Classify
-        label, confidence = classify_image(file_path)
-        print(f"[Flask] Classification result: {label} ({confidence})")
+        label, confidence, method = classify_image(file_path)
+        print(f"[Flask] Classification result: {label} ({confidence}) - method={method}")
 
         # Get static fish data if available
         fish_info = get_fish_data(label)
@@ -153,6 +153,7 @@ def classify():
             'success': True,
             'label': label,
             'confidence': confidence,
+            'method': method,
             'fish': fish_info
         }
         print(f"[Flask] /api/classify returning response")

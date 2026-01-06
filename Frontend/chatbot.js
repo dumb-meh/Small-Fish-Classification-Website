@@ -363,8 +363,12 @@ async function sendImageForClassification(file) {
             const label = data.label || 'unknown';
             const conf = data.confidence || 0;
             const fish = data.fish;
+            const method = data.method || 'unknown';
 
             let reply = `I think this is **${label}** (${(conf*100).toFixed(1)}% confident).`;
+            if (method === 'fallback') {
+                reply += ' (using fallback classifier — DL model not available)';
+            }
             if (fish) {
                 reply += `\n${fish.name_bn} — ${fish.scientific_name}. ${fish.description}`;
             } else {

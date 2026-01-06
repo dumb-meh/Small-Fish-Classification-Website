@@ -71,15 +71,19 @@ def _deterministic_fallback(image_path: str) -> Tuple[str, float]:
     return label, confidence
 
 
-def classify_image(file_path: str) -> Tuple[str, float]:
-    """Return (label, confidence) for the provided image file path.
+def classify_image(file_path: str) -> Tuple[str, float, str]:
+    """Return (label, confidence, method) for the provided image file path.
 
-    Tries DL model first, falls back to deterministic method otherwise.
+    Tries DL model first (method='dl'), falls back to deterministic method
+    (method='fallback') otherwise. The extra 'method' value is useful for
+    debugging and for the frontend to show which path was used.
     """
     try:
-        return _predict_with_model(file_path)
+        label, confidence = _predict_with_model(file_path)
+        return label, confidence, 'dl'
     except Exception as e:
         # Print debug but continue with fallback
         print(f"[ImageClass] Model predict failed: {e}; using fallback classifier")
-        return _deterministic_fallback(file_path)
+        label, confidence = _deterministic_fallback(file_path)
+        return label, confidence, 'fallback'
 
