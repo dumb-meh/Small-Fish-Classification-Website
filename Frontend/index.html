@@ -474,7 +474,13 @@
         // Initialize event listeners
         function initEventListeners() {
             // File upload handling
-            dropZone.addEventListener('click', () => imageUpload.click());
+            dropZone.addEventListener('click', (e) => {
+                // Don't trigger if clicking the label/button inside
+                if (e.target.tagName === 'LABEL' || e.target.closest('label')) {
+                    return;
+                }
+                imageUpload.click();
+            });
             dropZone.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 dropZone.classList.add('drag-over');
