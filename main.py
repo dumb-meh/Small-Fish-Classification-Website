@@ -3,7 +3,7 @@ from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 from Backend.backend import ChatSessionManager
-from Backend.image_classification import classify_image
+from Backend.image_classification import classify_image, model_status
 from Backend.database.fish_data import get_fish_data
 
 # Load environment variables from .env file
@@ -121,33 +121,54 @@ def classify():
     """
     print("\n" + "="*60)
     print("[Flask] /api/classify endpoint called")
+    print("[Flask] Request method:", request.method)
+    print("[Flask] Request content type:", request.content_type)
+    print("[Flask] Request files:", list(request.files.keys()))
+    print("[Flask] Request form:", dict(request.form))
     print("="*60)
 
     try:
         if 'image' not in request.files:
-            print("[Flask] No image file in request")
+            print("[Flask] ERROR: No image file in request")
+            print("[Flask] Available files:", list(request.files.keys()))
             return jsonify({'success': False, 'error': 'No image file provided'}), 400
 
         img = request.files['image']
+        print(f"[Flask] Image file received: {img.filename}")
+        print(f"[Flask] Image content type: {img.content_type}")
+        print(f"[Flask] Image file object: {img}")
+        
         session_id = request.form.get('session_id', 'default')
+        print(f"[Flask] Session ID: {session_id}")
 
         uploads_dir = os.path.join(os.getcwd(), 'uploads')
         if not os.path.exists(uploads_dir):
             os.makedirs(uploads_dir)
             print(f"[Flask] Created uploads directory: {uploads_dir}")
+        else:
+            print(f"[Flask] Using existing uploads directory: {uploads_dir}")
 
         # Save uploaded file
         filename = f"{session_id}_{int(__import__('time').time())}_{img.filename}"
         file_path = os.path.join(uploads_dir, filename)
+        print(f"[Flask] Saving file to: {file_path}")
         img.save(file_path)
-        print(f"[Flask] Saved uploaded image to: {file_path}")
+        print(f"[Flask] File saved successfully")
+        print(f"[Flask] File exists: {os.path.exists(file_path)}")
+        print(f"[Flask] File size: {os.path.getsize(file_path)} bytes")
 
         # Classify
+        print(f"[Flask] Starting classification...")
         label, confidence, method = classify_image(file_path)
-        print(f"[Flask] Classification result: {label} ({confidence}) - method={method}")
+        print(f"[Flask] Classification complete!")
+        print(f"[Flask] Result - Label: {label}, Confidence: {confidence}, Method: {method}")
 
         # Get static fish data if available
+        print(f"[Flask] Fetching fish data for label: {label}")
         fish_info = get_fish_data(label)
+        print(f"[Flask] Fish data retrieved: {bool(fish_info)}")
+        if fish_info:
+            print(f"[Flask] Fish name: {fish_info.get('name_en', 'N/A')}")
 
         response = {
             'success': True,
@@ -156,12 +177,34 @@ def classify():
             'method': method,
             'fish': fish_info
         }
-        print(f"[Flask] /api/classify returning response")
+        print(f"[Flask] Sending response with success=True")
+        print(f"[Flask] Response keys: {list(response.keys())}")
+        print(f"[Flask] /api/classify completed successfully")
         print("="*60 + "\n")
+        
+        # Also print model status for debug
+        status = model_status()
+        print(f"[Flask] Model status: {status}")
         return jsonify(response)
 
     except Exception as e:
         print(f"[Flask] ERROR in /api/classify: {e}")
+        print(f"[Flask] Exception type: {type(e).__name__}")
+        import traceback
+        print(f"[Flask] Full traceback:")
+        traceback.print_exc()
+        print("="*60 + "\n")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/model-status', methods=['GET'])
+def model_status_endpoint():
+    """Return model loading diagnostics"""
+    try:
+        status = model_status()
+        return jsonify({'success': True, 'status': status})
+    except Exception as e:
+        print(f"[Flask] ERROR in /api/model-status: {e}")
         import traceback
         traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500

@@ -447,64 +447,8 @@
             initChatbot();
         }
 
-        // Fish database with sample data
-        const fishDatabase = [
-            {
-                "id": 1,
-                "commonName": "Clownfish",
-                "scientificName": "Amphiprioninae",
-                "description": "Clownfish are small, brightly colored fish known for their symbiotic relationship with sea anemones. They have a mucus layer that protects them from the anemone's sting. Found in warm waters of the Indian and Pacific Oceans.",
-                "size": "10-18 cm",
-                "habitat": "Coral Reefs",
-                "region": "Indo-Pacific",
-                "diet": "Omnivore",
-                "conservationStatus": "Least Concern"
-            },
-            {
-                "id": 2,
-                "commonName": "Betta Fish",
-                "scientificName": "Betta splendens",
-                "description": "Also known as Siamese fighting fish, Bettas are known for their vibrant colors and elaborate fins. They are labyrinth fish, meaning they can breathe atmospheric air. Native to Southeast Asia.",
-                "size": "6-8 cm",
-                "habitat": "Rice Paddies",
-                "region": "Southeast Asia",
-                "diet": "Carnivore",
-                "conservationStatus": "Vulnerable"
-            },
-            {
-                "id": 3,
-                "commonName": "Goldfish",
-                "scientificName": "Carassius auratus",
-                "description": "One of the most common aquarium fish, goldfish were domesticated from wild carp. They have excellent color vision and memory. Originally bred in ancient China over 1000 years ago.",
-                "size": "15-30 cm",
-                "habitat": "Freshwater",
-                "region": "Worldwide",
-                "diet": "Omnivore",
-                "conservationStatus": "Domesticated"
-            },
-            {
-                "id": 4,
-                "commonName": "Angelfish",
-                "scientificName": "Pterophyllum",
-                "description": "Freshwater angelfish are known for their distinctive triangular shape and long fins. They are cichlids native to the Amazon Basin. Popular in aquariums for their graceful swimming.",
-                "size": "15-20 cm",
-                "habitat": "Amazon Rivers",
-                "region": "South America",
-                "diet": "Omnivore",
-                "conservationStatus": "Least Concern"
-            },
-            {
-                "id": 5,
-                "commonName": "Guppy",
-                "scientificName": "Poecilia reticulata",
-                "description": "Small, colorful livebearer fish popular in home aquariums. Known for their rapid reproduction and variety of colors. Native to northeast South America but introduced worldwide.",
-                "size": "4-6 cm",
-                "habitat": "Freshwater Streams",
-                "region": "South America",
-                "diet": "Omnivore",
-                "conservationStatus": "Least Concern"
-            }
-        ];
+        // Fish database moved to server-side static data (Backend/database/fish_data.py)
+        // The frontend no longer includes a duplicate static fish dataset.
 
         // Chatbot messages
         const chatbotResponses = [
@@ -515,27 +459,11 @@
             "Did you know some fish can change their gender? Clownfish, for example, are all born male and can become female!"
         ];
 
-        // DOM Elements
-        const dropZone = document.getElementById('dropZone');
-        const imageUpload = document.getElementById('imageUpload');
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const resultsSection = document.getElementById('resultsSection');
-        const previewImage = document.getElementById('previewImage');
-        const fishName = document.getElementById('fishName');
-        const scientificName = document.getElementById('scientificName');
-        const confidenceScore = document.getElementById('confidenceScore');
-        const confidencePercent = document.getElementById('confidencePercent');
-        const confidenceBar = document.getElementById('confidenceBar');
-        const fishDescription = document.getElementById('fishDescription');
-        const fishSize = document.getElementById('fishSize');
-        const fishHabitat = document.getElementById('fishHabitat');
-        const fishRegion = document.getElementById('fishRegion');
-        const fishDiet = document.getElementById('fishDiet');
-        const shareBtn = document.getElementById('shareBtn');
-        const newAnalysisBtn = document.getElementById('newAnalysisBtn');
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const loadingProgress = document.getElementById('loadingProgress');
-        const loadingStatus = document.getElementById('loadingStatus');
+        // DOM Elements - will be initialized on DOMContentLoaded
+        let dropZone, imageUpload, analyzeBtn, resultsSection, previewImage;
+        let fishName, scientificName, confidenceScore, confidencePercent, confidenceBar;
+        let fishDescription, fishSize, fishHabitat, fishRegion, fishDiet;
+        let shareBtn, newAnalysisBtn, loadingOverlay, loadingProgress, loadingStatus;
 
         // Current state
         let currentImage = null;
@@ -766,35 +694,56 @@
 
         // Handle image upload
         function handleImageUpload(file) {
+            console.log('[Upload] handleImageUpload called with file:', file);
+            console.log('[Upload] File name:', file.name);
+            console.log('[Upload] File type:', file.type);
+            console.log('[Upload] File size:', file.size, 'bytes');
+            
             if (!file.type.match('image.*')) {
+                console.error('[Upload] Invalid file type:', file.type);
                 alert('Please upload an image file (JPG, PNG, GIF, etc.)');
                 return;
             }
 
             if (file.size > 10 * 1024 * 1024) {
+                console.error('[Upload] File too large:', file.size);
                 alert('Image size should be less than 10MB');
                 return;
             }
 
             const reader = new FileReader();
             reader.onload = (e) => {
+                console.log('[Upload] FileReader loaded successfully');
+                console.log('[Upload] Image data length:', e.target.result.length);
                 currentImage = e.target.result;
                 currentFile = file;
+                console.log('[Upload] currentFile set:', currentFile.name);
                 previewImage.src = currentImage;
                 analyzeBtn.disabled = false;
                 analyzeBtn.classList.remove('disabled:opacity-50', 'disabled:cursor-not-allowed');
+                console.log('[Upload] Analyze button enabled');
                 
-                // Show preview in results section
-                resultsSection.classList.remove('hidden');
-                resultsSection.scrollIntoView({ behavior: 'smooth' });
+                // Don't show results yet - wait until analysis completes
+                // resultsSection will be shown by showClassificationResults()
             };
             reader.readAsDataURL(file);
+            console.log('[Upload] FileReader.readAsDataURL called');
         }
 
         // Analyze image (uploads to backend classifier)
         function analyzeImage() {
-            if (!currentFile) return;
+            console.log('[Analyze] analyzeImage called');
+            console.log('[Analyze] currentFile:', currentFile);
+            
+            if (!currentFile) {
+                console.error('[Analyze] No currentFile available!');
+                alert('No image selected. Please upload an image first.');
+                return;
+            }
 
+            console.log('[Analyze] Starting classification...');
+            console.log('[Analyze] File to upload:', currentFile.name, currentFile.size, 'bytes');
+            
             // Show loading overlay
             loadingOverlay.classList.remove('hidden');
             loadingProgress.style.width = '0%';
@@ -811,49 +760,57 @@
             // Prepare form data and send to backend
             const form = new FormData();
             form.append('image', currentFile);
-            form.append('session_id', sessionStorage.getItem('chatbot_session_id') || 'anonymous');
+            const sessionId = sessionStorage.getItem('chatbot_session_id') || 'anonymous';
+            form.append('session_id', sessionId);
+            console.log('[Analyze] FormData prepared with session_id:', sessionId);
 
+            console.log('[Analyze] Sending POST request to /api/classify');
             fetch('/api/classify', { method: 'POST', body: form })
-                .then(res => res.json())
+                .then(res => {
+                    console.log('[Analyze] Received response, status:', res.status);
+                    console.log('[Analyze] Response OK:', res.ok);
+                    return res.json();
+                })
                 .then(data => {
+                    console.log('[Analyze] Parsed JSON response:', data);
                     clearInterval(interval);
                     loadingProgress.style.width = `100%`;
                     loadingStatus.textContent = 'Finalizing results...';
                     setTimeout(() => {
                         loadingOverlay.classList.add('hidden');
                         if (data && data.success) {
+                            console.log('[Analyze] Classification successful, showing results');
                             showClassificationResults(data);
                         } else {
+                            console.error('[Analyze] Classification failed:', data.error);
                             alert('Classification failed: ' + (data.error || 'Unknown error'));
                         }
                     }, 500);
                 })
                 .catch(err => {
+                    console.error('[Analyze] Fetch error:', err);
+                    console.error('[Analyze] Error stack:', err.stack);
                     clearInterval(interval);
                     loadingOverlay.classList.add('hidden');
                     alert('Error classifying image: ' + err.message);
                 });
         }
 
-        // Show analysis results
+        // showAnalysisResults is retained for backward compatibility but no longer
+        // contains a static dataset. Prefer using the server `/api/classify` which
+        // returns structured fish information.
         function showAnalysisResults() {
-            // Randomly select a fish from database
-            const randomFish = fishDatabase[Math.floor(Math.random() * fishDatabase.length)];
-            const confidence = (Math.random() * 10 + 90).toFixed(1); // 90-100%
-
-            // Update UI with results
-            fishName.textContent = randomFish.commonName;
-            scientificName.textContent = randomFish.scientificName;
-            confidenceScore.textContent = `${confidence}%`;
-            confidencePercent.textContent = `${confidence}%`;
-            confidenceBar.style.width = `${confidence}%`;
-            fishDescription.textContent = randomFish.description;
-            fishSize.textContent = randomFish.size;
-            fishHabitat.textContent = randomFish.habitat;
-            fishRegion.textContent = randomFish.region;
-            fishDiet.textContent = randomFish.diet;
-
-            // Scroll to results
+            // Placeholder: prompt user to upload an image and run analyze
+            fishName.textContent = 'No result';
+            scientificName.textContent = '';
+            confidenceScore.textContent = `--`;
+            confidencePercent.textContent = `--`;
+            confidenceBar.style.width = `0%`;
+            fishDescription.textContent = 'Upload an image and click Analyze to get results from the server.';
+            fishSize.textContent = '';
+            fishHabitat.textContent = '';
+            fishRegion.textContent = '';
+            fishDiet.textContent = '';
             resultsSection.scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -900,7 +857,8 @@
                 fishDiet.textContent = '';
             }
 
-            // Scroll to results
+            // Show results section and scroll to it
+            resultsSection.classList.remove('hidden');
             resultsSection.scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -937,6 +895,33 @@
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize DOM element references
+            dropZone = document.getElementById('dropZone');
+            imageUpload = document.getElementById('imageUpload');
+            analyzeBtn = document.getElementById('analyzeBtn');
+            resultsSection = document.getElementById('resultsSection');
+            previewImage = document.getElementById('previewImage');
+            fishName = document.getElementById('fishName');
+            scientificName = document.getElementById('scientificName');
+            confidenceScore = document.getElementById('confidenceScore');
+            confidencePercent = document.getElementById('confidencePercent');
+            confidenceBar = document.getElementById('confidenceBar');
+            fishDescription = document.getElementById('fishDescription');
+            fishSize = document.getElementById('fishSize');
+            fishHabitat = document.getElementById('fishHabitat');
+            fishRegion = document.getElementById('fishRegion');
+            fishDiet = document.getElementById('fishDiet');
+            shareBtn = document.getElementById('shareBtn');
+            newAnalysisBtn = document.getElementById('newAnalysisBtn');
+            loadingOverlay = document.getElementById('loadingOverlay');
+            loadingProgress = document.getElementById('loadingProgress');
+            loadingStatus = document.getElementById('loadingStatus');
+
+            console.log('[Init] DOM elements initialized');
+            console.log('[Init] dropZone:', dropZone);
+            console.log('[Init] analyzeBtn:', analyzeBtn);
+            
+            // Initialize event listeners
             initEventListeners();
             
             // Add welcome message to chat
@@ -948,6 +933,23 @@
                     }
                 }
             }, 3000);
+
+            // Fetch model status for debugging
+            fetch('/api/model-status')
+                .then(r => r.json())
+                .then(data => {
+                    console.log('[ModelStatus] /api/model-status:', data);
+                    if (data && data.success && data.status) {
+                        const ms = data.status;
+                        const modelSourceEl = document.getElementById('modelSource');
+                        if (modelSourceEl) {
+                            modelSourceEl.textContent = ms.loaded ? 'Model: deep-learning (loaded)' : 'Model: not loaded (fallback will be used)';
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.warn('[ModelStatus] Unable to fetch model status:', err);
+                });
         });
     </script>
 </body>

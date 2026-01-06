@@ -395,4 +395,14 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[Chatbot] Attempting to load chatbot components...');
         loadChatbotComponents();
     }, 500);
+
+    // Fetch model status for debugging
+    fetch('/api/model-status')
+        .then(r => r.json())
+        .then(data => {
+            console.log('[Chatbot][ModelStatus] /api/model-status:', data);
+        })
+        .catch(err => {
+            console.warn('[Chatbot][ModelStatus] Unable to fetch model status:', err);
+        });
 });

@@ -13,3 +13,4 @@ Backend/model/
 uploads/
 Backend/uploads/
 myenv/
+**/__pycache__/
