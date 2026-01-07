@@ -339,6 +339,12 @@ function handleChatImageUpload(file) {
     reader.readAsDataURL(file);
 }
 
+// Expose handleChatImageUpload globally with a unique name to avoid conflicts
+if (typeof window !== 'undefined') {
+    window.chatbotHandleImageUpload = handleChatImageUpload;
+    console.log('[Chatbot] Exposed chatbotHandleImageUpload globally');
+}
+
 async function sendImageForClassification(file) {
     console.log('[Chatbot] Sending image to /api/classify');
     const typingIndicator = addTypingIndicator();
@@ -362,20 +368,33 @@ async function sendImageForClassification(file) {
         if (data.success) {
             const label = data.label || 'unknown';
             const conf = data.confidence || 0;
-            const fish = data.fish;
             const method = data.method || 'unknown';
 
-            let reply = `I think this is **${label}** (${(conf*100).toFixed(1)}% confident).`;
-            if (method === 'fallback') {
-                reply += ' (using fallback classifier — DL model not available)';
-            }
-            if (fish) {
-                reply += `\n${fish.name_bn} — ${fish.scientific_name}. ${fish.description}`;
-            } else {
-                reply += ' I could not find more information about this species.';
-            }
+            // Build a message with classification results to send to the LLM
+            const classificationMessage = `I uploaded an image of a fish. The AI model identified it as "${label}" with ${(conf*100).toFixed(1)}% confidence${method === 'fallback' ? ' (using fallback classifier)' : ''}. Can you tell me more about this fish?`;
+            
+            console.log('[Chatbot] Sending classification result to LLM:', classificationMessage);
+            
+            // Send classification result to chatbot API
+            const chatResp = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: classificationMessage,
+                    session_id: getSessionId()
+                })
+            });
 
-            addChatMessage(reply, 'ai');
+            const chatData = await chatResp.json();
+            console.log('[Chatbot] LLM response:', chatData);
+
+            if (chatData.success) {
+                addChatMessage(chatData.response, 'ai');
+            } else {
+                addChatMessage('Sorry, I encountered an error getting information about this fish.', 'ai');
+            }
         } else {
             addChatMessage('Sorry, I could not classify the image: ' + (data.error || 'Unknown error'), 'ai');
         }
