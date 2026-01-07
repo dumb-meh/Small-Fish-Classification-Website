@@ -111,6 +111,7 @@
                 <div class="bg-white rounded-2xl shadow-lg p-6">
                     <h3 class="text-2xl font-bold text-dark mb-6">Upload Fish Image</h3>
                     
+                    <!-- Drop Zone (shown initially, hidden after upload) -->
                     <div id="dropZone" class="drop-zone rounded-xl p-8 text-center cursor-pointer mb-6">
                         <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-full flex items-center justify-center">
                             <i class="fas fa-cloud-upload-alt text-primary text-3xl"></i>
@@ -122,6 +123,16 @@
                             <i class="fas fa-folder-open mr-2"></i>Browse Images
                         </label>
                         <p class="text-sm text-gray-400 mt-4">Supports JPG, PNG, WebP up to 10MB</p>
+                    </div>
+
+                    <!-- Image Preview (shown after upload, hidden initially) -->
+                    <div id="imagePreviewSection" class="hidden mb-6">
+                        <div class="text-center mb-4">
+                            <img id="uploadPreviewImage" src="" alt="Selected image" class="max-w-full h-64 object-contain mx-auto rounded-lg border-2 border-gray-200">
+                        </div>
+                        <button id="changeImageBtn" class="w-full bg-gray-100 text-dark py-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center">
+                            <i class="fas fa-sync-alt mr-2"></i>Change Image
+                        </button>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4 mb-6">
@@ -281,23 +292,23 @@
                     
                     <div class="grid grid-cols-2 gap-4">
                         <div class="text-center">
-                            <img src="https://picsum.photos/200/150?random=101" alt="Example fish 1" class="w-full h-32 object-cover rounded-lg mb-2">
-                            <p class="font-medium">Betta Fish</p>
+                            <img src="images/Guchi.png" alt="Example fish 1" class="w-full h-32 object-cover rounded-lg mb-2">
+                            <p class="font-medium">গুঁচি (Guchi)</p>
                             <p class="text-sm text-primary">98.2% confidence</p>
                         </div>
                         <div class="text-center">
-                            <img src="https://picsum.photos/200/150?random=102" alt="Example fish 2" class="w-full h-32 object-cover rounded-lg mb-2">
-                            <p class="font-medium">Goldfish</p>
+                            <img src="images/Pabda.png" alt="Example fish 2" class="w-full h-32 object-cover rounded-lg mb-2">
+                            <p class="font-medium">পাবদা (Pabda)</p>
                             <p class="text-sm text-primary">96.5% confidence</p>
                         </div>
                         <div class="text-center">
-                            <img src="https://picsum.photos/200/150?random=103" alt="Example fish 3" class="w-full h-32 object-cover rounded-lg mb-2">
-                            <p class="font-medium">Angelfish</p>
+                            <img src="images/Puti.png" alt="Example fish 3" class="w-full h-32 object-cover rounded-lg mb-2">
+                            <p class="font-medium">পুঁটি (Puti)</p>
                             <p class="text-sm text-primary">92.8% confidence</p>
                         </div>
                         <div class="text-center">
-                            <img src="https://picsum.photos/200/150?random=104" alt="Example fish 4" class="w-full h-32 object-cover rounded-lg mb-2">
-                            <p class="font-medium">Guppy</p>
+                            <img src="images/Tengra.png" alt="Example fish 4" class="w-full h-32 object-cover rounded-lg mb-2">
+                            <p class="font-medium">টেংরা (Tengra)</p>
                             <p class="text-sm text-primary">95.1% confidence</p>
                         </div>
                     </div>
@@ -314,11 +325,11 @@
                     
                     <div class="grid grid-cols-2 gap-6">
                         <div class="text-center">
-                            <div class="text-3xl font-bold mb-1">150+</div>
+                            <div class="text-3xl font-bold mb-1">10+</div>
                             <p class="text-blue-100">Fish Species</p>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl font-bold mb-1">50K+</div>
+                            <div class="text-3xl font-bold mb-1">100+</div>
                             <p class="text-blue-100">Images Analyzed</p>
                         </div>
                         <div class="text-center">
@@ -326,7 +337,7 @@
                             <p class="text-blue-100">Accuracy Rate</p>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl font-bold mb-1">2s</div>
+                            <div class="text-3xl font-bold mb-1">8s</div>
                             <p class="text-blue-100">Avg. Response Time</p>
                         </div>
                     </div>
@@ -510,6 +521,14 @@
 
             // Share button
             shareBtn.addEventListener('click', shareResults);
+
+            // Change image button
+            const changeImageBtn = document.getElementById('changeImageBtn');
+            if (changeImageBtn) {
+                changeImageBtn.addEventListener('click', () => {
+                    imageUpload.click();
+                });
+            }
         }
 
         // Initialize chatbot
@@ -724,13 +743,25 @@
                 currentImage = e.target.result;
                 currentFile = file;
                 console.log('[Upload] currentFile set:', currentFile.name);
+                
+                // Show preview in results section
                 previewImage.src = currentImage;
+                
+                // Show preview in upload section
+                const uploadPreviewImage = document.getElementById('uploadPreviewImage');
+                uploadPreviewImage.src = currentImage;
+                
+                // Hide dropZone, show preview section
+                dropZone.classList.add('hidden');
+                document.getElementById('imagePreviewSection').classList.remove('hidden');
+                
+                // Enable analyze button
                 analyzeBtn.disabled = false;
                 analyzeBtn.classList.remove('disabled:opacity-50', 'disabled:cursor-not-allowed');
-                console.log('[Upload] Analyze button enabled');
+                console.log('[Upload] Analyze button enabled, preview shown');
                 
-                // Don't show results yet - wait until analysis completes
-                // resultsSection will be shown by showClassificationResults()
+                // Hide results if previously shown
+                resultsSection.classList.add('hidden');
             };
             reader.readAsDataURL(file);
             console.log('[Upload] FileReader.readAsDataURL called');
@@ -834,7 +865,14 @@
             }
 
             if (fish) {
-                fishName.textContent = fish.name_en || data.label;
+                // Display Bangla name followed by English name in parentheses, fall back gracefully
+                const nameBn = fish.name_bn || '';
+                const nameEn = fish.name_en || data.label || '';
+                if (nameBn && nameEn) {
+                    fishName.textContent = `${nameBn} (${nameEn})`;
+                } else {
+                    fishName.textContent = nameBn || nameEn || 'Unknown';
+                }
                 scientificName.textContent = fish.scientific_name || '';
                 // Meta badges (region, diet)
                 const metaEl = document.getElementById('fishMeta');
@@ -871,10 +909,23 @@
         // Reset analysis
         function resetAnalysis() {
             currentImage = null;
+            currentFile = null;
             previewImage.src = '';
             imageUpload.value = '';
+            
+            // Reset upload preview
+            const uploadPreviewImage = document.getElementById('uploadPreviewImage');
+            uploadPreviewImage.src = '';
+            
+            // Show dropZone, hide preview section
+            dropZone.classList.remove('hidden');
+            document.getElementById('imagePreviewSection').classList.add('hidden');
+            
+            // Disable analyze button
             analyzeBtn.disabled = true;
             analyzeBtn.classList.add('disabled:opacity-50', 'disabled:cursor-not-allowed');
+            
+            // Hide results
             resultsSection.classList.add('hidden');
             
             // Scroll to upload section
