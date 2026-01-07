@@ -40,6 +40,15 @@
         .chatbot-toggle {
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
+
+        /* Fish card hover/click modal styles */
+        .fish-card { transition: transform .18s ease, box-shadow .18s ease; }
+        .fish-card:hover, .fish-card:focus { transform: translateY(-6px) scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.12); outline: none; }
+        #fish-modal { display: none; }
+        #fish-modal.show { display: flex; align-items: center; justify-content: center; }
+        #fish-modal .relative { transform: scale(.95); opacity: 0; transition: transform .2s ease, opacity .2s ease; }
+        #fish-modal.show .relative { transform: scale(1); opacity: 1; }
+        #modal-close { z-index: 60; }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
@@ -69,7 +78,7 @@
             <h2 class="text-2xl font-bold text-dark mb-6">Popular Fish Species</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Fish Card 1 - Bele -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow fish-card cursor-pointer focus:outline-none" tabindex="0" role="button" aria-pressed="false">
                     <img src="images/Bele.png" alt="Bele" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
@@ -102,7 +111,7 @@
                 </div>
 
                 <!-- Fish Card 2 - Chela -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow fish-card cursor-pointer focus:outline-none" tabindex="0" role="button" aria-pressed="false">
                     <img src="images/Chela.png" alt="Chela" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
@@ -135,7 +144,7 @@
                 </div>
 
                 <!-- Fish Card 3 - Guchi -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow fish-card cursor-pointer focus:outline-none" tabindex="0" role="button" aria-pressed="false">
                     <img src="images/Guchi.png" alt="Guchi" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
@@ -168,7 +177,7 @@
                 </div>
 
                 <!-- Fish Card 4 - Kachki -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow fish-card cursor-pointer focus:outline-none" tabindex="0" role="button" aria-pressed="false">
                     <img src="images/Kachki.png" alt="Kachki" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
@@ -201,7 +210,7 @@
                 </div>
 
                 <!-- Fish Card 5 - Kata Phasa -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow fish-card cursor-pointer focus:outline-none" tabindex="0" role="button" aria-pressed="false">
                     <img src="images/Kata%20Phasa.png" alt="Kata Phasa" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
@@ -234,7 +243,7 @@
                 </div>
 
                 <!-- Fish Card 6 - Mola -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow fish-card cursor-pointer focus:outline-none" tabindex="0" role="button" aria-pressed="false">
                     <img src="images/Mola.png" alt="Mola" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
@@ -267,7 +276,7 @@
                 </div>
 
                 <!-- Fish Card 7 - Nama Chanda -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow fish-card cursor-pointer focus:outline-none" tabindex="0" role="button" aria-pressed="false">
                     <img src="images/Nama%20Chanda.png" alt="Nama Chanda" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
@@ -300,7 +309,7 @@
                 </div>
 
                 <!-- Fish Card 8 - Pabda -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow fish-card cursor-pointer focus:outline-none" tabindex="0" role="button" aria-pressed="false">
                     <img src="images/Pabda.png" alt="Pabda" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
@@ -333,7 +342,7 @@
                 </div>
 
                 <!-- Fish Card 9 - Puti -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow fish-card cursor-pointer focus:outline-none" tabindex="0" role="button" aria-pressed="false">
                     <img src="images/Puti.png" alt="Puti" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
@@ -366,7 +375,7 @@
                 </div>
 
                 <!-- Fish Card 10 - Tengra -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow fish-card cursor-pointer focus:outline-none" tabindex="0" role="button" aria-pressed="false">
                     <img src="images/Tengra.png" alt="Tengra" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
@@ -426,6 +435,21 @@
         </div>
     </main>
 
+    <!-- Modal: full image + info -->
+    <div id="fish-modal" class="fixed inset-0 z-50 hidden p-4" aria-hidden="true">
+        <div id="modal-overlay" class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-3xl w-full mx-auto overflow-hidden transform" role="dialog" aria-modal="true">
+            <button id="modal-close" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl p-2 bg-white rounded-full shadow">×</button>
+            <img id="modal-image" src="" alt="" class="w-full h-64 object-cover">
+            <div class="p-6">
+                <h3 id="modal-title" class="text-2xl font-bold text-dark mb-1"></h3>
+                <p id="modal-scientific" class="text-gray-500 italic mb-3"></p>
+                <p id="modal-desc" class="text-gray-600 mb-4"></p>
+                <div id="modal-attrs" class="grid grid-cols-2 gap-3 text-sm"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Include Footer -->
     <div id="footer"></div>
     <script>
@@ -434,10 +458,100 @@
             .then(data => {
                 document.getElementById('footer').innerHTML = data;
             });
-    </script>
+    </script> 
 
     <!-- Chatbot Components -->
     <div id="chatbot-components"></div>
+
+    <script>
+        // Modal behavior for fish cards - improved accessibility and focus management
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.fish-card');
+            const modal = document.getElementById('fish-modal');
+            const overlay = document.getElementById('modal-overlay');
+            const modalBox = modal.querySelector('.relative');
+            const img = document.getElementById('modal-image');
+            const title = document.getElementById('modal-title');
+            const sci = document.getElementById('modal-scientific');
+            const desc = document.getElementById('modal-desc');
+            const attrs = document.getElementById('modal-attrs');
+            const closeBtn = document.getElementById('modal-close');
+            let lastFocused = null;
+
+            function getFocusableElements(container = modalBox) {
+                return Array.from(container.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])')).filter(el => el.offsetParent !== null);
+            }
+
+            function trapTabKey(e) {
+                const focusable = getFocusableElements();
+                if (!focusable.length) return;
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (e.key === 'Tab') {
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                }
+            }
+
+            function openModal(card) {
+                lastFocused = document.activeElement;
+                const cardImg = card.querySelector('img');
+                const cardTitle = card.querySelector('h3').innerText;
+                const cardSci = card.querySelector('p i') ? card.querySelector('p i').innerText : '';
+                const cardDesc = card.querySelector('p.text-gray-600') ? card.querySelector('p.text-gray-600').innerText : '';
+                const attrNodes = card.querySelectorAll('.grid.grid-cols-2 .flex');
+
+                img.src = cardImg.src;
+                img.alt = cardImg.alt;
+                title.textContent = cardTitle;
+                sci.textContent = cardSci;
+                desc.textContent = cardDesc;
+                attrs.innerHTML = '';
+                attrNodes.forEach(n => attrs.appendChild(n.cloneNode(true)));
+
+                modal.classList.add('show');
+                modal.classList.remove('hidden');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+                closeBtn.focus();
+
+                document.addEventListener('keydown', handleKeydownWhileOpen);
+            }
+
+            function closeModal() {
+                modal.classList.remove('show');
+                modal.classList.add('hidden');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+                document.removeEventListener('keydown', handleKeydownWhileOpen);
+                if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+            }
+
+            function handleKeydownWhileOpen(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                } else if (e.key === 'Tab') {
+                    trapTabKey(e);
+                }
+            }
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => openModal(card));
+                card.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(card); }
+                });
+            });
+
+            closeBtn.addEventListener('click', closeModal);
+            overlay.addEventListener('click', closeModal);
+        });
+    </script>
+
     <script src="chatbot.js"></script>
 </body>
 </html>
